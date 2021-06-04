@@ -21,7 +21,7 @@ class papyrusProcessor:
         for a_step in pipeline:
             request_info = a_step(request_info)
 
-        pprint.pprint(request_info)
+        return request_info
 
 
 processor = papyrusProcessor('/Users/palashshah/desktop/papyrus/papyrus/test.json', 'housing.csv')
