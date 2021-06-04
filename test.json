@@ -1,0 +1,14 @@
+{
+    "key": "7mDrrz4YDSgf0c0azrnkQK5UFJs1",
+    "description": "Testing Paraglide",
+    "data": {
+        "target": "ocean_proximity"
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "ocean_proximity"
+    },
+    "modeling": {
+        "type": "neighbors"
+    }
+}
