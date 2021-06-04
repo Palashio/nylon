@@ -8,7 +8,6 @@ class BachProcessor:
         self.y = None
         self.columns = self.df.columns
         self.model = None
-
     def run(self):
         request_info = {'df': self.df, 'json': self.json_file, 'y': None, 'model': 'None', 'analysis': None}
 
@@ -22,7 +21,6 @@ class BachProcessor:
             request_info = a_step(request_info)
 
         pprint.pprint(request_info)
-
-
+        
 processor = BachProcessor('test.json', 'housing.csv')
 print(processor.run())
