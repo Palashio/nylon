@@ -1,2 +1,2 @@
-# vibrato
+# papyrus
  Grammerized ML framework. 

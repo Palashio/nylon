@@ -13,9 +13,9 @@ from importlib import import_module
 from sklearn.ensemble import VotingClassifier
 import ssl
 from sklearn.model_selection import cross_val_score
-from vibrato.preprocessing.preprocessing import (initial_preprocessor, structured_preprocessor)
+from papyrus.preprocessing.preprocessing import (initial_preprocessor, structured_preprocessor)
 import nltk
-from vibrato.preprocessing.preprocessing import process_dates
+from papyrus.preprocessing.preprocessing import process_dates
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -27,7 +27,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from autocorrect import Speller
-from vibrato.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
+from papyrus.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)

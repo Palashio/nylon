@@ -1,8 +1,8 @@
-from vibrato.supplementaries.main import dataset_initializer
-from vibrato.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
+from papyrus.supplementaries.main import dataset_initializer
+from papyrus.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
 import pprint
 
-class vibratoProcessor:
+class papyrusProcessor:
     def __init__(self, json_file_path, dataset_path, save_model=False):
         self.df, self.json_file = dataset_initializer(dataset_path, json_file_path)
         self.y = None
@@ -24,5 +24,5 @@ class vibratoProcessor:
         pprint.pprint(request_info)
 
 
-processor = vibratoProcessor('/Users/palashshah/desktop/vibrato/vibrato/test.json', 'housing.csv')
+processor = papyrusProcessor('/Users/palashshah/desktop/papyrus/papyrus/test.json', 'housing.csv')
 print(processor.run())

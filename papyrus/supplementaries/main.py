@@ -1,4 +1,4 @@
-from vibrato.data.reader import DataReader
+from papyrus.data.reader import DataReader
 import json
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LinearRegression
