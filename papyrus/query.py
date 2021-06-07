@@ -1,6 +1,5 @@
 from papyrus.supplementaries.main import dataset_initializer
 from papyrus.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
-import pprint
 
 class papyrusProcessor:
     def __init__(self, json_file_path, dataset_path, save_model=False):

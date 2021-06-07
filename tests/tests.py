@@ -21,19 +21,19 @@ unittest.defaultTestLoader.sortTestMethodsUsing = compare
 
 
 class TestQueries(unittest.TestCase):
-    newClient = papyrusProcessor('/Users/palashshah/desktop/papyrus/data/json/basic.json', '/Users/palashshah/desktop/papyrus/housing.csv')
+    basic_process = papyrusProcessor('/Users/palashshah/desktop/papyrus/data/json/basic.json', '/Users/palashshah/desktop/papyrus/housing.csv')
     """
     TEST QUERIES
 
     Tests some queries in queries.py
     """
 
-    # Tests whether regression_ann_query works without errors, and creates a key in models dictionary
     @ordered
     def test_basic_json(self):
-        value = self.newClient.run()
+        value = self.basic_process.run()
         random_dict = {}
         self.assertTrue(str(type(value)) == str(type(random_dict)))
+
 
 
 if __name__ == '__main__':
