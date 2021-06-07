@@ -9,7 +9,6 @@ from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import MinMaxScaler
-from importlib import import_module
 from sklearn.ensemble import VotingClassifier
 import ssl
 from sklearn.model_selection import cross_val_score

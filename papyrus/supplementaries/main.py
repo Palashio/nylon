@@ -2,7 +2,6 @@ from papyrus.data.reader import DataReader
 import json
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LinearRegression
-from importlib import __import__
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import (OneHotEncoder,

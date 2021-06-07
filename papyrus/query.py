@@ -21,7 +21,3 @@ class papyrusProcessor:
             request_info = a_step(request_info)
 
         return request_info
-
-
-processor = papyrusProcessor('/Users/palashshah/desktop/papyrus/papyrus/test.json', 'housing.csv')
-print(processor.run())

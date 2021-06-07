@@ -3,11 +3,7 @@
     "data": {
         "target": "ocean_proximity"
     },
-    "preprocessor": {
-        "fill": "ALL",
-        "label-encode": "ocean_proximity"
-    },
     "modeling": {
-        "type": "neighbors"
+        "type": ["neighbors", "svm"]
     }
 }

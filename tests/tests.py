@@ -21,7 +21,10 @@ unittest.defaultTestLoader.sortTestMethodsUsing = compare
 
 
 class TestQueries(unittest.TestCase):
-    basic_process = papyrusProcessor('/Users/palashshah/desktop/papyrus/data/json/basic.json', '/Users/palashshah/desktop/papyrus/housing.csv')
+    basic_process = papyrusProcessor('./data/json/basic.json', './housing.csv')
+    without_preprocessor = papyrusProcessor('./data/json/without_preprocessor.json', './housing.csv')
+    multiple_models = papyrusProcessor('./data/json/multiple_models.json', './housing.csv')
+    all_analysis = papyrusProcessor('./data/json/all_analysis_methods.json', './housing.csv')
     """
     TEST QUERIES
 
@@ -30,8 +33,26 @@ class TestQueries(unittest.TestCase):
 
     @ordered
     def test_basic_json(self):
-        value = self.basic_process.run()
         random_dict = {}
+        value = self.basic_process.run()
+        self.assertTrue(str(type(value)) == str(type(random_dict)))
+
+    @ordered
+    def test_without_preprocessor_json(self):
+        random_dict = {}
+        value = self.without_preprocessor.run()
+        self.assertTrue(str(type(value)) == str(type(random_dict)))
+
+    @ordered
+    def test_multiple_models(self):
+        random_dict = {}
+        value = self.multiple_models.run()
+        self.assertTrue(str(type(value)) == str(type(random_dict)))
+
+    @ordered
+    def test_multiple_models(self):
+        random_dict = {}
+        value = self.all_analysis.run()
         self.assertTrue(str(type(value)) == str(type(random_dict)))
 
 

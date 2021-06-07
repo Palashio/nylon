@@ -8,6 +8,9 @@
         "label-encode": "ocean_proximity"
     },
     "modeling": {
-        "type": "neighbors"
+      "type": "neighbors"
+    },
+    "analysis": {
+        "type": ["cross-val", "acc-score", "pr", "confusion"]
     }
 }
