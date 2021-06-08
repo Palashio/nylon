@@ -43,9 +43,6 @@ Now, it's time to create a specifications file using the papyrus grammar. Here's
     "preprocessor": {
         "fill": "ALL",
         "label-encode": "ocean_proximity"
-    },
-    "modeling": {
-        "type": "neighbors"
     }
 }
 ```
