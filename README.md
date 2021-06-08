@@ -48,8 +48,8 @@ Now, it's time to create a specifications file using the papyrus grammar. Here's
 ```
 
 Now, we can override more components to take advantage of the built in ensembling of SVM's, and nearest neighbors modeling in papyrus. 
-```json
-{
+```python
+ json_file = {
     "data": {
         "target": "ocean_proximity"
     },
@@ -61,4 +61,10 @@ Now, we can override more components to take advantage of the built in ensemblin
         "type": ["svms", "neighbors"]
     }
 }
+```
+
+Now we can call,
+
+```python
+papyrus_object = papyrusProcessor.run(json_file)
 ```
