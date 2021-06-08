@@ -30,5 +30,22 @@ pip install .
 Papyrus works through the ```papyrusProcessor``` object. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
 
 ```python
-papyrus_object = papyrusProcessor('dataset.csv')
+papyrus_object = papyrusProcessor('housing.csv')
+```
+
+Now, it's time to create a specifications file using the papyrus grammar. Here's a basic one, that lets papyrus handle most of the work. 
+
+```json
+{
+    "data": {
+        "target": "ocean_proximity"
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "ocean_proximity"
+    },
+    "modeling": {
+        "type": "neighbors"
+    }
+}
 ```
