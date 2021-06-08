@@ -66,5 +66,5 @@ Now, we can override more components to take advantage of the built in ensemblin
 Now we can call,
 
 ```python
-papyrus_object = papyrusProcessor.run(json_file)
+papyrus_object.run(json_file)
 ```
