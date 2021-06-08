@@ -14,13 +14,13 @@ Papyrus offers a high-level natural language representation of machine learning.
 Install latest release version:
 
 ```
-pip install -U libra
+pip install -U papyrus-ai
 ```
 
 Install directory from github:
 
 ```
-git clone https://github.com/Palashio/libra.git
+git clone https://github.com/Palashio/papyrus.git
 cd libra
 pip install .
 ```
