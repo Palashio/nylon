@@ -24,3 +24,11 @@ git clone https://github.com/Palashio/libra.git
 cd libra
 pip install .
 ```
+
+## Usage: the basics
+
+Papyrus works through the ```papyrusProcessor``` object. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
+
+```python
+papyrus_object = papyrusProcessor('dataset.csv')
+```
