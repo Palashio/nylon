@@ -46,3 +46,19 @@ Now, it's time to create a specifications file using the papyrus grammar. Here's
     }
 }
 ```
+
+Now, we can override more components to take advantage of the built in ensembling of SVM's, and nearest neighbors modeling in papyrus. 
+```json
+{
+    "data": {
+        "target": "ocean_proximity"
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "ocean_proximity"
+    },
+    "modeling": {
+        "type": ["svms", "neighbors"]
+    }
+}
+```
