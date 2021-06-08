@@ -1,6 +1,5 @@
 import setuptools
 from setuptools import find_packages
-import papyrus-ai
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -10,7 +9,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="papyrus-ai",  # Replace with your own username
-    version="0.0.2",
+    version="0.0.4",
     author="Palash Shah",
     author_email="hello@paraglide.ai",
     description="High-level grammar interface for ML",

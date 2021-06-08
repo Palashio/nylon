@@ -25,7 +25,10 @@ def import_from(module, name):
     return getattr(module, name)
 
 
-def dataset_initializer(dataset, json_file_path):
+def dataset_initializer(request_info):
+    dataset = request_info['df']
+    json_file_path = request_info['json']
+
     read_in_json = read_json(json_file_path)
     if "target" not in read_in_json['data']:
          raise Exception("A target column has to specified under the -- target -- keyword.")
@@ -41,6 +44,8 @@ def dataset_initializer(dataset, json_file_path):
     #     df = new_func(json_file)
     #     os.remove(json_file['data']['custom']['loc'] + ".py")
 
-    return df, read_in_json
+    request_info['df'] = df
+    request_info['json'] = read_in_json
+    return request_info
 
 

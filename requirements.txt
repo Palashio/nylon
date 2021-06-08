@@ -1,5 +1,4 @@
 sklearn
-json
 numpy
 pandas
 xgboost
@@ -7,3 +6,4 @@ setuptools
 nltk
 bentoml
 autocorrect
+prince
