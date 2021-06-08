@@ -14,6 +14,10 @@ from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)
 
+import warnings
+
+
+warnings.filterwarnings('ignore')
 
 def initial_preprocessor(
         data,

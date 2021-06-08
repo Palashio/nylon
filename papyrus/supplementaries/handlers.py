@@ -31,6 +31,7 @@ from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)
 
+
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 modeling_vocab = {'linear', 'svm', 'decision', 'sgd', 'neighbors', 'adaboost', 'gradient-boost', 'rf', 'svms', 'ensembles'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
@@ -64,7 +65,9 @@ def preprocess_module(request_info):
 
                 for column in columns:
                     enc = LabelEncoder()
-                    df[column] = enc.fit_transform(df[column])
+                    resulting_encoder = enc.fit_transform(df[column])
+                    df = df.assign(ocean_proximity=resulting_encoder)
+                    # df1 = df1.assign(e=e.values)
             if element == 'dates':
                 columns = preprocess['dates']
 
@@ -399,10 +402,11 @@ def acc_score(model, df, y):
     return accuracy_score(y['test'], model.predict(df['test']))
 
 def cross_score(json_file, df, model, y):
+    print(y)
     if 'analysis' in json_file:
         cv_fold = (json_file['analysis']['spec'] if 'spec' in json_file['analysis'] else 5)
     else:
-        cv_fold = 5
+        cv_fold = 2
     return cross_val_score(model, df['train'], y['train'], cv=cv_fold).tolist()
 
 def confusion(model, df, y):
@@ -418,12 +422,12 @@ def precision_calculation(model, df, y):
     average_value = ('binary' if len(np.unique(y['test'])) == 2 else 'macro')
 
 
-    return float(precision_score(y['test'], output, average=average_value))
+    return float(precision_score(y['test'], output, average=average_value, labels=np.unique(output)))
 
 def recalll(model, df, y):
     output = model.predict(df['test'])
     average_value = ('binary' if len(np.unique(y['test'])) == 2 else 'macro')
-    return float(recall_score(y['test'], output, average=average_value))
+    return float(recall_score(y['test'], output, average=average_value, labels=np.unique(output)))
 
 
 def text_preprocessing(combined, text_cols):

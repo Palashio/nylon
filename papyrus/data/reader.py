@@ -1,5 +1,10 @@
 import pandas as pd
 
+import warnings
+
+
+warnings.filterwarnings('ignore')
+
 class DataReader():
     def __init__(self, in_mem_data, dataset_name):
         self.data = in_mem_data

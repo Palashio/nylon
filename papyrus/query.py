@@ -1,5 +1,9 @@
 from papyrus.supplementaries.main import dataset_initializer
 from papyrus.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
+import warnings
+
+
+warnings.filterwarnings('ignore')
 
 class papyrusProcessor:
     def __init__(self, dataset_path, save_model=False):

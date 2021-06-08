@@ -9,6 +9,11 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import ExtraTreesClassifier
 
+import warnings
+
+
+warnings.filterwarnings('ignore')
+
 def default_modeling(df, y):
     svm_model = svm.SVC().fit(df['train'], y['train'])
     neighbors = KNeighborsClassifier().fit(df['train'], y['train'])
