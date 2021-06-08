@@ -7,3 +7,20 @@
 
 
 Papyrus offers a high-level natural language representation of machine learning. It allows you to interact with the complex components of the ML pipeline with the english language. 
+
+
+## Installation
+
+Install latest release version:
+
+```
+pip install -U libra
+```
+
+Install directory from github:
+
+```
+git clone https://github.com/Palashio/libra.git
+cd libra
+pip install .
+```
