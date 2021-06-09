@@ -7,6 +7,8 @@ from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    LabelEncoder)
+from importlib import import_module
+import os
 
 preprocess_vocab = {'one-hot': OneHotEncoder, 'label-encode': LabelEncoder, 'fill': SimpleImputer,
                     'scale': StandardScaler}
@@ -29,23 +31,23 @@ def dataset_initializer(request_info):
     dataset = request_info['df']
     json_file_path = request_info['json']
 
-    read_in_json = read_json(json_file_path)
-    if "target" not in read_in_json['data']:
+    json_file = read_json(json_file_path)
+    if "target" not in json_file['data']:
          raise Exception("A target column has to specified under the -- target -- keyword.")
 
-    if "custom" not in read_in_json['data']:
-        df = DataReader(read_in_json, dataset)
+    if "custom" not in json_file['data']:
+        df = DataReader(json_file, dataset)
         df = df.data_reader()
 
-    # else:
-    #     mod = import_module(json_file['data']['custom']['loc'])
-    #     new_func = getattr(mod, json_file['data']['custom']['name'])
-    #
-    #     df = new_func(json_file)
-    #     os.remove(json_file['data']['custom']['loc'] + ".py")
+    else:
+        mod = import_module(json_file['data']['custom']['loc'])
+        new_func = getattr(mod, json_file['data']['custom']['name'])
+
+        df = new_func(json_file)
+        os.remove(json_file['data']['custom']['loc'] + ".py")
 
     request_info['df'] = df
-    request_info['json'] = read_in_json
+    request_info['json'] = json_file
     return request_info
 
 
