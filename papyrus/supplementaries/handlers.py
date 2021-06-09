@@ -5,6 +5,7 @@ from pandas.api.types import is_numeric_dtype
 import os
 from sklearn.ensemble import BaggingClassifier
 import sys
+from importlib import import_module
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import OrdinalEncoder
@@ -48,15 +49,12 @@ def preprocess_module(request_info):
             if element not in preprocess_vocab:
                 raise Exception("Your specificed preprocessing technique -- {} -- is not supported".format(element))
             if element == "custom":
-                raise Exception("Custom is not currently supported")
-                # sys_path = './train/custom_buffer/' + user_id + "/" + run_id + "/"
-                # sys.path.insert(1, sys_path)
-                # mod = import_module(file_name.split(".")[0])
-                #
-                # new_func = getattr(mod, json_file['preprocessor']['custom']['name'])
-                #
-                # df = new_func(df, json_file)
-                # sys.path.remove(sys_path)
+                mod = import_module(['preprocessor']['custom']['loc'])
+
+                new_func = getattr(mod, json_file['preprocessor']['custom']['name'])
+
+                df = new_func(df, json_file)
+                os.remove(json_file['preprocessor']['custom']['loc'] + ".py")
             if element == "label-encode":
                 columns = preprocess['label-encode']
 
@@ -253,14 +251,12 @@ def modeling_module(request_info):
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
     else:
-        # if 'custom' in json_file['modeling']:
-        #     sys_path = os.getcwd() + '/train/custom_buffer/' + user_id + "/" + run_id + "/"
-        #     sys.path.insert(1, sys_path)
-        #     mod = import_module(file_name.split(".")[0])
-        #     new_func = getattr(mod, json_file['modeling']['custom']['name'])
-        #
-        #     model = new_func(df['train'], y['train'])
-        #     sys.path.remove(sys_path)
+        if 'custom' in json_file['modeling']:
+            mod = import_module(['modeling']['custom']['loc'])
+            new_func = getattr(mod, json_file['modeling']['custom']['name'])
+
+            model = new_func(df['train'], y['train'])
+            os.remove(json_file['modeling']['custom']['loc'] + ".py")
         if 'type' in json_file['modeling']:
             type_model = json_file['modeling']['type']
             model_storage = []
@@ -371,16 +367,15 @@ def analysis_module(request_info):
                         analysis_tuple['confusion_matrix'] = matrix
                         analysis_tuple['precision'] = precision
                         analysis_tuple['recall'] = recaller
-            # if element == "custom":
-            #     sys_path = os.getcwd() + '/train/custom_buffer/' + user_id + "/" + run_id + "/"
-            #     sys.path.insert(1, sys_path)
-            #     mod = import_module(file_name.split(".")[0])
-            #
-            #     new_func = getattr(mod, json_file['analysis']['custom']['name'])
-            #     results, name = new_func(json_file, df, model, y)
-            #     sys.path.remove(sys_path)
-            #
-            #     analysis_tuple[name] = results
+            if element == "custom":
+
+                mod = import_module(['analysis']['custom']['loc'])
+                new_func = getattr(mod, json_file['modeling']['custom']['name'])
+
+                results, name = new_func(json_file, df, model, y)
+                os.remove(json_file['analysis']['custom']['loc'] + ".py")
+
+                analysis_tuple[name] = results
 
     request_info['analysis'] = analysis_tuple
     return request_info
