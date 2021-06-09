@@ -70,3 +70,10 @@ papyrus_object.run(json_file)
 ```
 
 More docs can be found at [here](docs.paraglide.ai)!
+
+## Contact
+
+Shoot me an email at [hello@paraglide.ai](mailto:hello@paraglide.ai) if you'd like to get in touch!
+
+Follow me on [twitter](https://twitter.com/_pshah) for updates and my insights about modern AI!
+
