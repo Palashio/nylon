@@ -8,14 +8,14 @@ with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
 setuptools.setup(
-    name="papyrus-ai",  # Replace with your own username
+    name="nylon-ai",  # Replace with your own username
     version="0.0.5",
     author="Palash Shah",
     author_email="hello@paraglide.ai",
     description="High-level grammar interface for ML",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Palashio/papyrus",
+    url="https://github.com/Palashio/nylon",
     install_requires=requirements,
     packages=find_packages(exclude=('tests',)),
     classifiers=[

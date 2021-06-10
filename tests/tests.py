@@ -1,4 +1,4 @@
-from papyrus.query import papyrusProcessor
+from nylon.query import nylonProcessor
 
 import unittest
 
@@ -21,10 +21,10 @@ unittest.defaultTestLoader.sortTestMethodsUsing = compare
 
 
 class TestQueries(unittest.TestCase):
-    basic_process = papyrusProcessor('./housing.csv')
-    without_preprocessor = papyrusProcessor('./housing.csv')
-    multiple_models = papyrusProcessor('./housing.csv')
-    all_analysis = papyrusProcessor('./housing.csv')
+    basic_process = nylonProcessor('./housing.csv')
+    without_preprocessor = nylonProcessor('./housing.csv')
+    multiple_models = nylonProcessor('./housing.csv')
+    all_analysis = nylonProcessor('./housing.csv')
     """
     TEST QUERIES
 

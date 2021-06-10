@@ -13,9 +13,9 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import VotingClassifier
 import ssl
 from sklearn.model_selection import cross_val_score
-from papyrus.preprocessing.preprocessing import (initial_preprocessor, structured_preprocessor)
+from nylon.preprocessing.preprocessing import (initial_preprocessor, structured_preprocessor)
 import nltk
-from papyrus.preprocessing.preprocessing import process_dates
+from nylon.preprocessing.preprocessing import process_dates
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -27,7 +27,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from autocorrect import Speller
-from papyrus.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
+from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)
@@ -267,6 +267,7 @@ def modeling_module(request_info):
 
 
             fifty_train, _, fifty_y, _ = train_test_split(df['train'], y['train'], test_size=0.5)
+
             for a_model in type_model:
                 if a_model not in modeling_vocab:
                     raise Exception(

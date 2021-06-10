@@ -1,7 +1,7 @@
-from papyrus.supplementaries.main import dataset_initializer
-from papyrus.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
+from nylon.supplementaries.main import dataset_initializer
+from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
 
-class papyrusProcessor:
+class nylonProcessor:
     def __init__(self, dataset_path, save_model=False, custom_files = []):
         self.df = dataset_path
         self.json_file = None
