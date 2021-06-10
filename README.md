@@ -1,9 +1,11 @@
 <div align="center">
  
-<img src="nylonlogo.jpeg" alt="drawing" width="100"/>
+<img src="nylonlogo.jpg" alt="drawing" width="500"/>
+ 
+ 
  
 [![Build Status](https://www.travis-ci.com/Palashio/nylon.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/nylon)
-[![Downloads](https://pepy.tech/badge/nylon-ai)](https://pepy.tech/project/nylon-ai)
+[![Downloads](https://pepy.tech/badge/papyrus-ai)](https://pepy.tech/project/nylon-ai)
 [![Package](https://img.shields.io/pypi/v/nylon-ai)
 
 nylon offers a high-level natural language representation of machine learning. It allows you to interact with the complex components of the ML pipeline with the english language.
