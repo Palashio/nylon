@@ -1,15 +1,20 @@
 <div align="center">
  
-# nylon
- Grammerized ML framework.
+<img src="nylonlogo.jpg" alt="drawing" width="500"/>
  
-[![Build Status](https://www.travis-ci.com/Palashio/nylon.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/nylon)
-[![Downloads](https://pepy.tech/badge/nylon-ai)](https://pepy.tech/project/nylon-ai)
-[![Package](https://img.shields.io/pypi/v/nylon-ai)
+ 
+` `  
+ **A high-level english representation of machine learning; modify what you want and let us handle the rest.**
 
-nylon offers a high-level natural language representation of machine learning. It allows you to interact with the complex components of the ML pipeline with the english language.
+ 
+[![Build Status](https://www.travis-ci.com/Palashio/papyrus.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/papyrus)
+[![Downloads](https://pepy.tech/badge/papyrus-ai)](https://pepy.tech/project/papyrus-ai)
+[![Package](https://img.shields.io/pypi/v/papyrus-ai)
+
+ 
 
  </div>
+ 
 ## Installation
 
 Install latest release version:
@@ -21,20 +26,20 @@ pip install -U nylon-ai
 Install directory from github:
 
 ```
-git clone https://github.com/Palashio/papyrus.git
-cd papyrus-ai
+git clone https://github.com/Palashio/nylon.git
+cd nylon-ai
 pip install .
 ```
 
 ## Usage: the basics
 
-nylon works through the `nylonProcessor` object. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
+Nylon works through the `nylonProcessor` object. Generally, a new object is creating everytime you're working with a new dataset. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
 
 ```python
 nylon_object = nylonProcessor('housing.csv')
 ```
 
-Now, it's time to create a specifications file using the nylon grammar. Here's a basic one, that lets nylon handle most of the work.
+Now, it's time to create a specifications file using the nylon grammar. Here's a basic one, that lets nylon handle most of the work. Nylon currently has four major parts in it's grammar: the data reader, preprocessor, modeler, and analysis modules. In the example below, you can see that we're specifying the target column under data (which is always required), and manually specifying the type of preprocessing we'd like. **Everything we haven't specified will be handled for us.**
 
 ```json
 {
@@ -70,6 +75,8 @@ Now we can call,
 ```python
 nylon_object.run(json_file)
 ```
+
+This will return a fully trained nylon object. You can access all information about this particular iteration in the ```.results``` field of the object.
 
 More docs can be found at [here](docs.paraglide.ai)!
 
