@@ -7,7 +7,7 @@
  **A high-level english representation of machine learning; modify what you want and let us handle the rest.**
 
  
-[![Build Status](https://www.travis-ci.com/Palashio/nylon.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/nylon)
+[![Build Status](https://www.travis-ci.com/Palashio/papyrus.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/papyrus)
 [![Downloads](https://pepy.tech/badge/papyrus-ai)](https://pepy.tech/project/papyrus-ai)
 [![Package](https://img.shields.io/pypi/v/papyrus-ai)
 
