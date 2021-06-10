@@ -26,8 +26,8 @@ pip install -U nylon-ai
 Install directory from github:
 
 ```
-git clone https://github.com/Palashio/papyrus.git
-cd papyrus-ai
+git clone https://github.com/Palashio/nylon.git
+cd nylon-ai
 pip install .
 ```
 
