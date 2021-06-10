@@ -24,7 +24,7 @@ Install directory from github:
 
 ```
 git clone https://github.com/Palashio/papyrus.git
-cd libra
+cd papyrus-ai
 pip install .
 ```
 
