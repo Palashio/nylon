@@ -1,6 +1,6 @@
 <div align="center">
  
-# papyrus
+# nylon
  Grammerized ML framework.
  
 [![Build Status](https://www.travis-ci.com/Palashio/papyrus.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/papyrus)
