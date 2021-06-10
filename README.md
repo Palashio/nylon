@@ -1,6 +1,6 @@
 <div align="center">
  
-<img src="nylonlogowhite.png" alt="drawing" width="400"/>
+<img src="/data_storage/github_images/nylonlogowhite.png" alt="drawing" width="400"/>
  
  
 ` `  
