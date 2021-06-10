@@ -3,6 +3,8 @@ import json
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LinearRegression
 from sklearn.impute import SimpleImputer
+import shutil
+import sys
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
@@ -32,19 +34,29 @@ def dataset_initializer(request_info):
     json_file_path = request_info['json']
 
     json_file = read_json(json_file_path)
-    if "target" not in json_file['data']:
-         raise Exception("A target column has to specified under the -- target -- keyword.")
 
     if "custom" not in json_file['data']:
+        if "target" not in json_file['data']:
+            raise Exception("A target column has to specified under the -- target -- keyword.")
         df = DataReader(json_file, dataset)
         df = df.data_reader()
 
     else:
-        mod = import_module(json_file['data']['custom']['loc'])
+        sys_path = "/nylon/supplementaries/buffer/"
+        sys.path.insert(1, os.getcwd() + sys_path)
+
+        absolute_path = os.path.abspath(os.getcwd()) + '/nylon/supplementaries/buffer/temp.py'
+
+        file_name = json_file['data']['custom']['loc'].rsplit("/")[-1]
+        shutil.copy(json_file['data']['custom']['loc'], absolute_path)
+
+
+        mod = import_module('temp')
         new_func = getattr(mod, json_file['data']['custom']['name'])
 
         df = new_func(json_file)
-        os.remove(json_file['data']['custom']['loc'] + ".py")
+        sys.path.remove(sys_path)
+        os.remove("./buffer/temp.py")
 
     request_info['df'] = df
     request_info['json'] = json_file

@@ -1,0 +1,16 @@
+{
+    "description": "Testing Paraglide",
+    "data": {
+        "custom": {
+          "loc": "/Users/palashshah/desktop/nylon/data_storage/test_files/data_customs.py",
+          "name": "normal_reader"
+        }
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "ocean_proximity"
+    },
+    "modeling": {
+        "type": "neighbors"
+    }
+}
