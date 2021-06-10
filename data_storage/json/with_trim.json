@@ -1,0 +1,14 @@
+{
+    "description": "Testing Paraglide",
+    "data": {
+        "target": "ocean_proximity",
+        "trim": 0.4
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "ocean_proximity"
+    },
+    "modeling": {
+        "type": "neighbors"
+    }
+}

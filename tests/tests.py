@@ -25,6 +25,7 @@ class TestQueries(unittest.TestCase):
     without_preprocessor = nylonProcessor('./housing.csv')
     multiple_models = nylonProcessor('./housing.csv')
     all_analysis = nylonProcessor('./housing.csv')
+    with_trim = nylonProcessor('./housing.csv')
     """
     TEST QUERIES
 
@@ -50,6 +51,11 @@ class TestQueries(unittest.TestCase):
     def test_multiple_models(self):
         value = self.all_analysis.run('./data_storage/json/all_analysis_methods.json')
         self.assertTrue(str(type(value)) == str(type(self.all_analysis)))
+
+    @ordered
+    def test_trim(self):
+        value = self.with_trim.run('./data_storage/json/with_trim.json')
+        self.assertTrue(str(type(value)) == str(type(self.with_trim)))
 
 if __name__ == '__main__':
     unittest.main()
