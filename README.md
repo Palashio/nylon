@@ -1,7 +1,6 @@
 <div align="center">
  
-# nylon
- Grammerized ML framework.
+<img src="nylonlogo.jpeg" alt="drawing" width="100"/>
  
 [![Build Status](https://www.travis-ci.com/Palashio/nylon.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/nylon)
 [![Downloads](https://pepy.tech/badge/nylon-ai)](https://pepy.tech/project/nylon-ai)
