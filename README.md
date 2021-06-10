@@ -74,6 +74,8 @@ Now we can call,
 nylon_object.run(json_file)
 ```
 
+This will return a fully trained nylon object. You can access all information about this particular iteration in the ```.results``` field of the object.
+
 More docs can be found at [here](docs.paraglide.ai)!
 
 ## Contact
