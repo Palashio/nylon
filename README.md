@@ -37,7 +37,7 @@ Nylon works through the `nylonProcessor` object. Generally, a new object is crea
 nylon_object = nylonProcessor('housing.csv')
 ```
 
-Now, it's time to create a specifications file using the nylon grammar. Here's a basic one, that lets nylon handle most of the work. Nylon currently has four major parts in it's grammar: the data reader, preprocessor, modeler, and analysis modules. In the example below, you can see that we're specifying the target column under data (which is always required), and manually specifying the type of preprocessing we'd like. Everything we haven't specified will be handled for us. 
+Now, it's time to create a specifications file using the nylon grammar. Here's a basic one, that lets nylon handle most of the work. Nylon currently has four major parts in it's grammar: the data reader, preprocessor, modeler, and analysis modules. In the example below, you can see that we're specifying the target column under data (which is always required), and manually specifying the type of preprocessing we'd like. **Everything we haven't specified will be handled for us.**
 
 ```json
 {
