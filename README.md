@@ -1,6 +1,6 @@
 <div align="center">
  
-<img src="nylonlogo.jpg" alt="drawing" width="500"/>
+<img src="nylonlogowhite.jpg" alt="drawing" width="500"/>
  
  
 ` `  
