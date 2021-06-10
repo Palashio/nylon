@@ -8,7 +8,8 @@
 [![Downloads](https://pepy.tech/badge/papyrus-ai)](https://pepy.tech/project/papyrus-ai)
 [![Package](https://img.shields.io/pypi/v/papyrus-ai)
 
-nylon offers a high-level natural language representation of machine learning. It allows you to interact with the complex components of the ML pipeline with the english language.
+ 
+**A high-level english representation of machine learning; modify what you want and let us handle the rest.**
 
  </div>
  
