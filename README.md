@@ -1,3 +1,5 @@
+<div align="center">
+ 
 # papyrus
  Grammerized ML framework.
  
@@ -9,6 +11,7 @@
 Papyrus offers a high-level natural language representation of machine learning. It allows you to interact with the complex components of the ML pipeline with the english language. 
 
 
+ </div>
 ## Installation
 
 Install latest release version:
