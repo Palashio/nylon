@@ -7,7 +7,7 @@ class nylonProcessor:
     :param dataset_path is the path to the dataset
     :param save_model: whether the model should be saved in a .sav file
     '''
-    def __init__(self, dataset_path, save_model=False):
+    def __init__(self, dataset_path, save_model=False, custom_files = []):
         self.df = dataset_path
         self.json_file = None
         self.y = None
@@ -17,7 +17,7 @@ class nylonProcessor:
     def run(self, json_file_path):
         '''
         Runs the dataset on a json file specification
-        :param json_file_path path to json file for nylon specifications.
+        :param json_file_path path to json file for
         '''
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None, 'custom': self.custom_files}
         pipeline = [
