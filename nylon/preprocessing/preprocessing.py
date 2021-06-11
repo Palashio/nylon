@@ -22,6 +22,12 @@ warnings.filterwarnings('ignore')
 def initial_preprocessor(
         data,
         json_file):
+    '''
+    initial preprocessing function that's called in the case that the user doesn't provide a preprocessing option
+    :param data: dataframe
+    :param json_file: is the json file with the specifications for preprocessing
+    :return initially preprocessed dataframe
+    '''
     object_columns = [
         col for col,
                 col_type in data.dtypes.iteritems() if col_type == 'object']
@@ -62,6 +68,14 @@ def initial_preprocessor(
 
 
 def structured_preprocessor(data, ca_threshold=0.5, text=[]):
+    '''
+    structured preprocessing function that's called in the case that the user doesn't provide a preprocessing option, called after the initial changes
+    :param data: dataframe
+    :param ca_threshold: is correspondence analysis threshold for removing columns
+    :param text: textual columns that require preprocessing by lemmatization, tokenization
+    :return preprocessed dataframe
+    '''
+
     # Preprocessing for datetime columns
     process_dates(data)
 
@@ -171,7 +185,11 @@ def structured_preprocessor(data, ca_threshold=0.5, text=[]):
 
 
 def process_dates(data):
-
+    '''
+    function to process dates
+    :param data: dataframe
+    :return dataframe with dates preprocessed
+    '''
     for df in data:
         df = data[df]
         datetime_cols = df.select_dtypes('datetime64')
@@ -189,6 +207,12 @@ def process_dates(data):
 
 
 def text_preprocessing(data, text_cols):
+    '''
+    function to process text
+    :param data: dataframe
+    :param text_cols: are the text columns that can be preprocessed
+    :return dataframe with dates preprocessed
+    '''
     lemmatizer = WordNetLemmatizer()
     combined = pd.concat([data['train'], data['test']], axis=0)
 
@@ -220,6 +244,11 @@ def text_preprocessing(data, text_cols):
 
 
 def textembedder(text):
+    '''
+    function to embed textual columns
+    :param text: the text columns
+    :return the text in embedded columns
+    '''
     total = list()
     for i in text:
         total.append(np.sum(i))
