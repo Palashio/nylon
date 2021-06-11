@@ -2,7 +2,7 @@
     "description": "Testing Paraglide",
     "data": {
         "custom": {
-          "loc": "./test_files/data_customs.py",
+          "loc": "../data_storage/test_files/data_customs.py",
           "name": "normal_reader"
         }
     },
