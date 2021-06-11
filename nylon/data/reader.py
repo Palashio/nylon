@@ -5,12 +5,24 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+
 class DataReader():
+    '''
+    Constructor for the DataReader class.
+    Data Reader class takes in the information given by the user, and appropriately reads the data in. Detects for filetype, and other information passed to it
+    :param in_mem_data: data file as a path
+    :param dataset_name: name of the dataset
+    '''
+
     def __init__(self, in_mem_data, dataset_name):
         self.data = in_mem_data
         self.dataset_name = dataset_name
 
     def data_reader(self):
+        '''
+        function to activate the data reading
+        :return dataframe that's read into the system as a pandas dataframe object
+        '''
         frame = 0
         if 'type' not in self.data:
             data_type = self.type_detector(self.dataset_name)
@@ -49,6 +61,11 @@ class DataReader():
         return frame
 
     def type_detector(self, data):
+        '''
+        helper function to take the file name and figure out what sort of file it is
+        :param data the string name of the file
+        :return file extension name
+        '''
         if data[-3:] == 'csv':
             return 'csv'
         if data[-2:] == 'xs':
@@ -57,7 +74,12 @@ class DataReader():
             return 'json'
 
     def csv(self, dataset_name, drop=[]):
-
+        '''
+        function to read in csv file
+        :param dataset_name is the path to the actual dataset
+        :param drop list of columns to drop, not activated yet
+        :return pandas dataframe
+        '''
         try:
             df = pd.read_csv(dataset_name)
         except:
@@ -70,6 +92,12 @@ class DataReader():
         return df
 
     def xs(self, datset_name, drop=[]):
+        '''
+        function to read in excel file
+        :param dataset_name is the path to the actual dataset
+        :param drop list of columns to drop, not activated yet
+        :return pandas dataframe
+        '''
         try:
             df = pd.read_excel(datset_name)
         except:
