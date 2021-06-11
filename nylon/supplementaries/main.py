@@ -33,7 +33,10 @@ def dataset_initializer(request_info):
     dataset = request_info['df']
     json_file_path = request_info['json']
 
-    json_file = read_json(json_file_path)
+    if isinstance(json_file_path, str):
+        json_file = read_json(json_file_path)
+    else:
+        json_file = json_file_path
 
     if "custom" not in json_file['data']:
         if "target" not in json_file['data']:

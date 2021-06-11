@@ -17,7 +17,8 @@ class nylonProcessor:
         self.history = {}
         self.id = uuid.uuid4()
         self.dataframe = None
-    def run(self, json_file_path):
+
+    def run(self, json_file_path, as_dict=False):
         '''
         Runs the dataset on a json file specification
         :param json_file_path path to json file for
