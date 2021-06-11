@@ -16,6 +16,7 @@ class nylonProcessor:
         self.custom_files = custom_files
         self.history = {}
         self.id = uuid.uuid4()
+        self.dataframe = None
     def run(self, json_file_path):
         '''
         Runs the dataset on a json file specification
@@ -39,6 +40,5 @@ class nylonProcessor:
 
         self.results = request_info['analysis']
         self.model = request_info['model']
-        self.df = request_info['df']
 
         return self

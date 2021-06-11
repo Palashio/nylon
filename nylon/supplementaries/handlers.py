@@ -417,10 +417,6 @@ def default_analysis(json_file, model, df, y):
     matrix = confusion(model, df, y)
     precise = precision_calculation(model, df, y)
     recaller = recalll(model, df, y)
-
-    print("Results of accuracy score are -----  " + str(acc_results))
-    print("Results of CV are ------- " + str(cv_results))
-
     return acc_results, cv_results, matrix, precise, recaller
 
 
