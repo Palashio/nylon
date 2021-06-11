@@ -1,6 +1,6 @@
 from nylon.supplementaries.main import dataset_initializer
 from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
-
+import uuid
 class nylonProcessor:
     '''
     Constructor for the nylonProcessor class.
@@ -14,7 +14,8 @@ class nylonProcessor:
         self.model = None
         self.results = None
         self.custom_files = custom_files
-        self.history = []
+        self.history = {}
+        self.id = uuid.uuid4()
     def run(self, json_file_path):
         '''
         Runs the dataset on a json file specification
@@ -22,6 +23,7 @@ class nylonProcessor:
         '''
 
         if self.model is not None:
+            self.history[str(self.id)] = {'df': self.df, 'json': json_file_path, 'y': self.y, 'model': 'self.model', 'results': self.results}
 
 
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None, 'custom': self.custom_files}
