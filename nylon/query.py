@@ -42,5 +42,3 @@ class nylonProcessor:
         self.df = request_info['df']
 
         return self
-
-    def store_in_history(self):
