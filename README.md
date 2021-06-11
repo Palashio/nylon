@@ -81,7 +81,7 @@ This will return a fully trained nylon object. You can access all information ab
 Welcome to the Libra community!
 
 If you have any questions, feel free to:
-1. [read the docs](https://docs.paraglide.ai/).
+1. [Read the Docs](https://docs.paraglide.ai/).
 2. [Search through the issues](https://github.com/Palashio/nylon/issues).
 3. [Join our Discord](https://join.slack.com/t/the-libra-team/shared_invite/zt-ek6bpd47-hdIxXlRAenKfy5JNWe8bgw).
 
