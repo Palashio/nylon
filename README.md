@@ -83,7 +83,7 @@ Welcome to the Nylon community!
 If you have any questions, feel free to:
 1. [Read the Docs](https://docs.paraglide.ai/).
 2. [Search through the issues](https://github.com/Palashio/nylon/issues).
-3. [Join our Discord](https://join.slack.com/t/the-libra-team/shared_invite/zt-ek6bpd47-hdIxXlRAenKfy5JNWe8bgw).
+3. [Join our Discord](https://discord.gg/udZSbhws9D).
 
 
 ## Contact
