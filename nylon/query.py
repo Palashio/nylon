@@ -2,7 +2,12 @@ from nylon.supplementaries.main import dataset_initializer
 from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
 
 class nylonProcessor:
-    def __init__(self, dataset_path, save_model=False, custom_files = []):
+    '''
+    Constructor for the nylonProcessor class.
+    :param dataset_path is the path to the dataset
+    :param save_model: whether the model should be saved in a .sav file
+    '''
+    def __init__(self, dataset_path, save_model=False):
         self.df = dataset_path
         self.json_file = None
         self.y = None
@@ -10,6 +15,10 @@ class nylonProcessor:
         self.results = None
         self.custom_files = custom_files
     def run(self, json_file_path):
+        '''
+        Runs the dataset on a json file specification
+        :param json_file_path path to json file for nylon specifications.
+        '''
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None, 'custom': self.custom_files}
         pipeline = [
             dataset_initializer,
