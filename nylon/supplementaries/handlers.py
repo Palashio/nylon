@@ -6,6 +6,7 @@ import os
 from sklearn.ensemble import BaggingClassifier
 import sys
 from importlib import import_module
+import shutil
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import OrdinalEncoder
@@ -49,12 +50,22 @@ def preprocess_module(request_info):
             if element not in preprocess_vocab:
                 raise Exception("Your specificed preprocessing technique -- {} -- is not supported".format(element))
             if element == "custom":
-                mod = import_module(['preprocessor']['custom']['loc'])
 
+                sys_path = "/nylon/supplementaries/buffer/"
+                sys.path.insert(1, os.getcwd() + sys_path)
+
+                absolute_path = os.path.abspath(os.getcwd()) + '/nylon/supplementaries/buffer/temp.py'
+
+                file_name = json_file['preprocessor']['custom']['loc'].rsplit("/")[-1]
+                shutil.copy(json_file['preprocessor']['custom']['loc'], absolute_path)
+
+                mod = import_module('temp')
                 new_func = getattr(mod, json_file['preprocessor']['custom']['name'])
 
                 df = new_func(df, json_file)
-                os.remove(json_file['preprocessor']['custom']['loc'] + ".py")
+                sys.path.remove(sys_path)
+                os.remove("./buffer/temp.py")
+
             if element == "label-encode":
                 columns = preprocess['label-encode']
 
@@ -252,11 +263,21 @@ def modeling_module(request_info):
         model = default_modeling(df, y)
     else:
         if 'custom' in json_file['modeling']:
-            mod = import_module(['modeling']['custom']['loc'])
+
+            sys_path = "/nylon/supplementaries/buffer/"
+            sys.path.insert(1, os.getcwd() + sys_path)
+
+            absolute_path = os.path.abspath(os.getcwd()) + '/nylon/supplementaries/buffer/temp.py'
+            file_name = json_file['modeling']['custom']['loc'].rsplit("/")[-1]
+            shutil.copy(json_file['modeling']['custom']['loc'], absolute_path)
+
+            mod = import_module('temp')
             new_func = getattr(mod, json_file['modeling']['custom']['name'])
 
             model = new_func(df['train'], y['train'])
-            os.remove(json_file['modeling']['custom']['loc'] + ".py")
+            sys.path.remove(sys_path)
+            os.remove("./buffer/temp.py")
+
         if 'type' in json_file['modeling']:
             type_model = json_file['modeling']['type']
             model_storage = []
@@ -369,14 +390,23 @@ def analysis_module(request_info):
                         analysis_tuple['precision'] = precision
                         analysis_tuple['recall'] = recaller
             if element == "custom":
+                sys_path = "/nylon/supplementaries/buffer/"
+                sys.path.insert(1, os.getcwd() + sys_path)
 
-                mod = import_module(['analysis']['custom']['loc'])
-                new_func = getattr(mod, json_file['modeling']['custom']['name'])
+                absolute_path = os.path.abspath(os.getcwd()) + '/nylon/supplementaries/buffer/temp.py'
+
+                file_name = json_file['analysis']['custom']['loc'].rsplit("/")[-1]
+                shutil.copy(json_file['analysis']['custom']['loc'], absolute_path)
+
+                mod = import_module('temp')
+                new_func = getattr(mod, json_file['analysis']['custom']['name'])
 
                 results, name = new_func(json_file, df, model, y)
-                os.remove(json_file['analysis']['custom']['loc'] + ".py")
+                sys.path.remove(sys_path)
+                os.remove("./buffer/temp.py")
 
                 analysis_tuple[name] = results
+
 
     request_info['analysis'] = analysis_tuple
     return request_info

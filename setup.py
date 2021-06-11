@@ -9,10 +9,10 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="nylon-ai",  # Replace with your own username
-    version="0.0.5",
+    version="0.0.0",
     author="Palash Shah",
     author_email="hello@paraglide.ai",
-    description="High-level grammar interface for ML",
+    description="An interactive grammar of machine learning.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Palashio/nylon",
