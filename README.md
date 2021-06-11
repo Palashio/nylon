@@ -78,7 +78,7 @@ This will return a fully trained nylon object. You can access all information ab
 
 
 ## Asking for help
-Welcome to the Libra community!
+Welcome to the Nylon community!
 
 If you have any questions, feel free to:
 1. [Read the Docs](https://docs.paraglide.ai/).
