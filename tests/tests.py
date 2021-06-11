@@ -58,10 +58,6 @@ class TestQueries(unittest.TestCase):
         value = self.with_trim.run('./data_storage/json/with_trim.json')
         self.assertTrue(str(type(value)) == str(type(self.with_trim)))
 
-    @ordered
-    def test_data_custom(self):
-        value = self.data_custom.run('./data_storage/json/data_custom.json')
-        self.assertTrue(str(type(value)) == str(type(self.data_custom)))
 
 if __name__ == '__main__':
     unittest.main()
