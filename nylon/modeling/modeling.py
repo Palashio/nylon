@@ -15,6 +15,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 def default_modeling(df, y):
+    '''
+    default modeling function to try all classifiers, and return the best one.
+    :param df pandas dataframe object
+    :param y is the target column
+    :return compiled model, which represents the one with the highest accuracy_score
+    '''
     svm_model = svm.SVC().fit(df['train'], y['train'])
     neighbors = KNeighborsClassifier().fit(df['train'], y['train'])
     tree = DecisionTreeClassifier().fit(df['train'], y['train'])
@@ -33,6 +39,13 @@ def default_modeling(df, y):
     return list_models[scores.index(max(scores))]
 
 def a_svm(df_1, y, trained=True):
+    '''
+    svm training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled svm model
+    '''
     clf = svm.SVC()
     if trained:
         clf.fit(df_1, y)
@@ -40,6 +53,13 @@ def a_svm(df_1, y, trained=True):
     return clf
 
 def nearest_neighbors(df_1, y, trained=True):
+    '''
+    nearest_neighbors training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled nearest_neighbors model
+    '''
     neigh = KNeighborsClassifier()
 
     min_neighbors = 3
@@ -69,6 +89,13 @@ def nearest_neighbors(df_1, y, trained=True):
 
 
 def a_tree(df_1, y, trained=True):
+    '''
+    decision tree training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled decision tree model
+    '''
     tree = DecisionTreeClassifier()
     if trained:
         tree.fit(df_1, y)
@@ -77,6 +104,13 @@ def a_tree(df_1, y, trained=True):
 
 
 def sgd(df_1, y, trained=True):
+    '''
+    sgd  training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled sgd model
+    '''
     clf = SGDClassifier()
     if trained:
         clf.fit(df_1, y)
@@ -85,6 +119,13 @@ def sgd(df_1, y, trained=True):
 
 
 def gradient_boosting(df_1, y, trained=True):
+    '''
+    gradient_boosting  training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled gradient_boosting model
+    '''
     clf = GradientBoostingClassifier()
     if trained:
         clf.fit(df_1, y)
@@ -93,6 +134,13 @@ def gradient_boosting(df_1, y, trained=True):
 
 
 def adaboost(df_1, y, trained=True):
+    '''
+    adaboost  training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled adaboost model
+    '''
     clf = AdaBoostClassifier()
     if trained:
         clf.fit(df_1, y)
@@ -100,18 +148,38 @@ def adaboost(df_1, y, trained=True):
 
 
 def rf(df_1, y, trained=True):
+    '''
+    random forest  training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled random forest model
+    '''
     clf = RandomForestClassifier()
     if trained:
         clf.fit(df_1, y)
     return clf
 
 def mlp(df_1, y, trained=True):
+    '''
+    mlp  training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :trained: whether the model is already trained or not
+    :return compiled mlp model
+    '''
     clf = MLPClassifier()
     if trained:
         clf.fit(df_1, y)
     return clf
 
 def svm_stroke(df_1 , y):
+    '''
+    group of svms training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :return compiled svm model
+    '''
     models = []
     scores = []
 
@@ -129,6 +197,12 @@ def svm_stroke(df_1 , y):
     return models[scores.index(max(scores))]
 
 def ensemble_stroke(df_1, y):
+    '''
+    group of ensembles training function
+    :param df_1: dataframe
+    :param y: is the target column
+    :return compiled ensemble model
+    '''
     models = []
     scores = []
 
