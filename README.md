@@ -8,7 +8,7 @@
 
  
 [![Build Status](https://www.travis-ci.com/Palashio/papyrus.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/papyrus)
-[![Downloads](https://pepy.tech/badge/papyrus-ai)](https://pepy.tech/project/papyrus-ai)
+[![Downloads](https://pepy.tech/badge/nylon-ai)](https://pepy.tech/project/nylon-ai)
 [![Package](https://img.shields.io/pypi/v/papyrus-ai)](https://img.shields.io/pypi/v/papyrus-ai)
 
  </div>
@@ -76,7 +76,15 @@ nylon_object.run(json_file)
 
 This will return a fully trained nylon object. You can access all information about this particular iteration in the ```.results``` field of the object.
 
-More docs can be found at [here](docs.paraglide.ai)!
+
+## Asking for help
+Welcome to the Nylon community!
+
+If you have any questions, feel free to:
+1. [Read the Docs](https://docs.paraglide.ai/).
+2. [Search through the issues](https://github.com/Palashio/nylon/issues).
+3. [Join our Discord](https://discord.gg/udZSbhws9D).
+
 
 ## Contact
 
