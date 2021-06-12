@@ -8,7 +8,7 @@
 
  
 [![Build Status](https://www.travis-ci.com/Palashio/papyrus.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/papyrus)
-[![Downloads]([![Downloads](https://pepy.tech/badge/nylon-ai)](https://pepy.tech/project/nylon-ai))
+[![Downloads](https://pepy.tech/badge/nylon-ai)](https://pepy.tech/project/nylon-ai)
 [![Package](https://img.shields.io/pypi/v/papyrus-ai)](https://img.shields.io/pypi/v/papyrus-ai)
 
  </div>
