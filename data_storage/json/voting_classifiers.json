@@ -1,0 +1,13 @@
+{
+    "description": "Testing Paraglide",
+    "data": {
+        "target": "ocean_proximity"
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "ocean_proximity"
+    },
+    "modeling": {
+        "voting": ["svm", "rf"]
+    }
+}
