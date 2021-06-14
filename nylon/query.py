@@ -28,7 +28,7 @@ class nylonProcessor:
         '''
 
         if self.model is not None:
-            self.history[str(id)] = {"id": self.latest_id, 'df': self.df, 'json': json_file_path, 'y': self.y,
+            self.history[self.latest_id] = {'df': self.df, 'json': json_file_path, 'y': self.y,
                                      'model': 'self.model', 'results': self.results}
 
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
@@ -46,6 +46,7 @@ class nylonProcessor:
 
         self.results = request_info['analysis']
         self.model = request_info['model']
-        self.latest_id = uuid.uuid4()
+        new_id = str(uuid.uuid4())
+        self.latest_id = new_id
 
         return self

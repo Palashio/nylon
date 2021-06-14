@@ -70,6 +70,7 @@ class TestQueries(unittest.TestCase):
     def test_history_functionality(self):
         self.test_history.run('./data_storage/json/basic.json')
         self.test_history.run('./data_storage/json/basic.json')
+        print(self.test_history.history)
         self.assertTrue(len(self.test_history.history) == 1)
 
 
