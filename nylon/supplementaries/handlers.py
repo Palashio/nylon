@@ -37,7 +37,7 @@ from sklearn.preprocessing import (OneHotEncoder,
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 modeling_vocab = {'linear', 'svm', 'decision', 'sgd', 'neighbors', 'adaboost', 'gradient-boost', 'rf', 'svms', 'ensembles'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
-models = {"svm" : a_svm, "neighbors" : nearest_neighbors, "decision" : a_tree, "sgd" : sgd, "adaboost" : gradient_boosting, 'rf' : rf, 'mlp' : mlp, 'svms' : svm_stroke, 'ensembles' : ensemble_stroke }
+models = {"gradient-boost": gradient_boosting, "svm" : a_svm, "neighbors" : nearest_neighbors, "decision" : a_tree, "sgd" : sgd, "adaboost" : adaboost, 'rf' : rf, 'mlp' : mlp, 'svms' : svm_stroke, 'ensembles' : ensemble_stroke }
 just_models = {"svm", "neighbors", "decision", "sgd", "adaboost", "rf", "mlp"}
 
 def preprocess_module(request_info):
@@ -295,7 +295,7 @@ def modeling_module(request_info):
                         "The specified model -- {} -- is not in the list of available models".format(
                             a_model))
 
-                model = models[a_model](fifty_train, fifty_y)
+                model = models[a_model](fifty_train, fifty_y, json_file=json_file['modeling'])
                 model_storage.append(model)
 
                 curr_acc = accuracy_score(model.predict(df['test']), y['test'])
@@ -303,7 +303,7 @@ def modeling_module(request_info):
 
             max_accuracy = accs.index(max(accs))
             best_model_type = type_model[max_accuracy]
-            model = models[best_model_type](df['train'], y['train'])
+            model = models[best_model_type](df['train'], y['train'], json_file=json_file['modeling'])
         elif 'voting' in json_file['modeling']:
 
             classifiers = json_file['modeling']['voting']
@@ -340,7 +340,7 @@ def return_models_voting(classifier_list):
     estimators = []
 
     for classifier in classifier_list:
-        clf = models[classifier](None, None, trained=False)
+        clf = models[classifier](None, None, {"no_params": 0}, trained=False)
         estimators.append((str(clf), clf))
 
     return estimators

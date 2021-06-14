@@ -8,6 +8,9 @@
         "label-encode": "ocean_proximity"
     },
     "modeling": {
-        "type": "neighbors"
+        "type": "gradient-boost",
+        "params": {
+            "learning-rate": 0.1
+        }
     }
 }
