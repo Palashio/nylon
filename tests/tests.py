@@ -21,13 +21,13 @@ unittest.defaultTestLoader.sortTestMethodsUsing = compare
 
 
 class TestQueries(unittest.TestCase):
-    basic_process = nylonProcessor('./housing.csv')
-    without_preprocessor = nylonProcessor('./housing.csv')
-    multiple_models = nylonProcessor('./housing.csv')
-    all_analysis = nylonProcessor('./housing.csv')
-    with_trim = nylonProcessor('./housing.csv')
-    data_custom = nylonProcessor('./housing.csv')
-    voting_classifier = nylonProcessor('./housing.csv')
+    basic_process = nylonProcessor('./data_storage/datasets/housing.csv')
+    without_preprocessor = nylonProcessor('./data_storage/datasets/housing.csv')
+    multiple_models = nylonProcessor('./data_storage/datasets/housing.csv')
+    all_analysis = nylonProcessor('./data_storage/datasets/housing.csv')
+    with_trim = nylonProcessor('./data_storage/datasets/housing.csv')
+    data_custom = nylonProcessor('./data_storage/datasets/housing.csv')
+    voting_classifier = nylonProcessor('./data_storage/datasets/housing.csv')
 
     """
     TEST QUERIES
