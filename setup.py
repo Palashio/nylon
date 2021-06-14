@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="nylon-ai",  # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Palash Shah",
     author_email="hello@paraglide.ai",
     description="An interactive grammar of machine learning.",

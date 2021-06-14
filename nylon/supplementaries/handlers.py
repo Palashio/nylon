@@ -424,7 +424,7 @@ def acc_score(model, df, y):
     return accuracy_score(y['test'], model.predict(df['test']))
 
 def cross_score(json_file, df, model, y):
-    print(y)
+    (y)
     if 'analysis' in json_file:
         cv_fold = (json_file['analysis']['spec'] if 'spec' in json_file['analysis'] else 5)
     else:
@@ -516,12 +516,12 @@ def feature_importances(model, df, y):
 #
 #     for column in columns:
 #         df_column = dataset[column]
-#         print(df_column)
+#         (df_column)
 #         for i, value in enumerate(df_column):
 #             df_column
 #         # for value in dataset[column]:
 #         #     dataset[column] = tokenizer(dataset[column])
-#         #     #print(value)
+#         #     #(value)
 #
 #     return dataset
 

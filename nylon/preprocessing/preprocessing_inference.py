@@ -222,7 +222,7 @@ def generate_column_labels(full_pipeline, numeric_cols, text_cols):
 
             except Exception as error:
                 # For debugging only
-                print(error)
+                (error)
                 cols = list(numeric_cols)
 
         return cols

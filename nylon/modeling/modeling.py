@@ -153,7 +153,6 @@ def a_tree(df_1, y, json_file, trained=True):
         if 'min_samples_leaf' in json_file['params']:
             min_samples_leaf= parameters['min_samples_leaf']
 
-    print("why")
     tree = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
                               min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf)
 
