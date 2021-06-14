@@ -53,7 +53,6 @@ def dataset_initializer(request_info):
         file_name = json_file['data']['custom']['loc'].rsplit("/")[-1]
         shutil.copy(json_file['data']['custom']['loc'], absolute_path)
 
-
         mod = import_module('temp')
         new_func = getattr(mod, json_file['data']['custom']['name'])
 
@@ -64,5 +63,3 @@ def dataset_initializer(request_info):
     request_info['df'] = df
     request_info['json'] = json_file
     return request_info
-
-

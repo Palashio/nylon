@@ -1,12 +1,15 @@
 from nylon.supplementaries.main import dataset_initializer
 from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
 import uuid
+
+
 class nylonProcessor:
     '''
     Constructor for the nylonProcessor class.
     :param dataset_path is the path to the dataset
     :param save_model: whether the model should be saved in a .sav file
     '''
+
     def __init__(self, dataset_path, save_model=False, custom_files=[]):
         self.df = dataset_path
         self.json_file = None
@@ -24,12 +27,12 @@ class nylonProcessor:
         :param json_file_path path to json file for
         '''
 
-
         if self.model is not None:
-            self.history[str(id)] = {"id": self.latest_id, 'df': self.df, 'json': json_file_path, 'y': self.y, 'model': 'self.model', 'results': self.results}
+            self.history[str(id)] = {"id": self.latest_id, 'df': self.df, 'json': json_file_path, 'y': self.y,
+                                     'model': 'self.model', 'results': self.results}
 
-
-        request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None, 'custom': self.custom_files}
+        request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
+                        'custom': self.custom_files}
 
         pipeline = [
             dataset_initializer,

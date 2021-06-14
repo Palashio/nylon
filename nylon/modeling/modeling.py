@@ -11,8 +11,8 @@ from sklearn.ensemble import ExtraTreesClassifier
 
 import warnings
 
-
 warnings.filterwarnings('ignore')
+
 
 def default_modeling(df, y):
     '''
@@ -38,6 +38,7 @@ def default_modeling(df, y):
 
     return list_models[scores.index(max(scores))]
 
+
 def a_svm(df_1, y, json_file, trained=True):
     '''
     svm training function
@@ -49,7 +50,7 @@ def a_svm(df_1, y, json_file, trained=True):
 
     degree = 3
     gamma = 'scale'
-    kernel='rbf'
+    kernel = 'rbf'
 
     if 'params' in json_file:
         parameters = json_file['params']
@@ -59,7 +60,6 @@ def a_svm(df_1, y, json_file, trained=True):
             gamma = parameters['gamma']
         if 'kernel' in json_file['params']:
             kernel = parameters['kernel']
-
 
     clf = svm.SVC(degree=degree, gamma=gamma, kernel=kernel)
 
@@ -82,23 +82,22 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
     sampled_df = df_1.iloc[:sample_amount]
     sampled_y = y.iloc[:sample_amount]
 
-
     if 'params' in json_file:
-        n_neighbors=5
-        weights='uniform'
-        algorithm='auto'
-        alpha=0.0001
+        n_neighbors = 5
+        weights = 'uniform'
+        algorithm = 'auto'
+        alpha = 0.0001
 
         if 'params' in json_file:
             parameters = json_file['params']
             if 'n_neighbors' in json_file['params']:
-                n_neighbors= parameters['n_neighbors']
+                n_neighbors = parameters['n_neighbors']
             if 'weights' in json_file['params']:
-                weights= parameters['weights']
+                weights = parameters['weights']
             if 'algorithm' in json_file['params']:
-                algorithm= parameters['algorithm']
+                algorithm = parameters['algorithm']
             if 'alpha' in json_file['params']:
-                alpha= parameters['alpha']
+                alpha = parameters['alpha']
 
         neigh = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm, alpha=alpha)
         clf = neigh.fit(sampled_df, sampled_y)
@@ -116,9 +115,9 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
                 neigh.fit(sampled_df, sampled_y)
                 a_score = accuracy_score(neigh.predict(sampled_df), sampled_y)
                 if a_score > best_score:
-                    best_score=a_score
-                    best_neighbors=x
-                    best_model=neigh
+                    best_score = a_score
+                    best_neighbors = x
+                    best_model = neigh
 
             model = KNeighborsClassifier(n_neighbors=best_neighbors).fit(df_1, y)
 
@@ -139,22 +138,21 @@ def a_tree(df_1, y, json_file, trained=True):
     min_samples_split = 2
     min_samples_leaf = 1
 
-
     if 'params' in json_file:
         parameters = json_file['params']
         if 'criterion' in json_file['params']:
-            criterion= parameters['criterion']
+            criterion = parameters['criterion']
         if 'splitter' in json_file['params']:
-            splitter= parameters['splitter']
+            splitter = parameters['splitter']
         if 'max_depth' in json_file['params']:
-            max_depth= parameters['max_depth']
+            max_depth = parameters['max_depth']
         if 'min_samples_split' in json_file['params']:
-            min_samples_split= parameters['min_samples_split']
+            min_samples_split = parameters['min_samples_split']
         if 'min_samples_leaf' in json_file['params']:
-            min_samples_leaf= parameters['min_samples_leaf']
+            min_samples_leaf = parameters['min_samples_leaf']
 
     tree = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
-                              min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf)
+                                  min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf)
 
     if trained:
         tree.fit(df_1, y)
@@ -187,7 +185,6 @@ def sgd(df_1, y, json_file, trained=True):
         if 'max_iter' in json_file['params']:
             max_iter = parameters['max_iter']
 
-
     clf = SGDClassifier(loss=loss, alpha=alpha, fit_intercept=fit_intercept, max_iter=max_iter)
 
     if trained:
@@ -205,9 +202,9 @@ def gradient_boosting(df_1, y, json_file, trained=True):
     :return compiled gradient_boosting model
     '''
     loss = 'deviance'
-    learning_rate=0.1
-    n_estimators=100
-    criterion='friedman_mse'
+    learning_rate = 0.1
+    n_estimators = 100
+    criterion = 'friedman_mse'
 
     if 'params' in json_file:
         parameters = json_file['params']
@@ -220,7 +217,8 @@ def gradient_boosting(df_1, y, json_file, trained=True):
         if 'criterion' in json_file['params']:
             criterion = parameters['criterion']
 
-    clf = GradientBoostingClassifier(loss=loss, learning_rate=learning_rate, n_estimators=n_estimators, criterion='friedman_mse')
+    clf = GradientBoostingClassifier(loss=loss, learning_rate=learning_rate, n_estimators=n_estimators,
+                                     criterion='friedman_mse')
 
     if trained:
         clf.fit(df_1, y)
@@ -231,7 +229,7 @@ def gradient_boosting(df_1, y, json_file, trained=True):
 def adaboost(df_1, y, json_file, trained=True):
     n_estimators = 50
     learning_rate = 1
-    base_estimator=None
+    base_estimator = None
 
     if 'params' in json_file:
         parameters = json_file['params']
@@ -280,10 +278,12 @@ def rf(df_1, y, json_file, trained=True):
         if 'max_features' in parameters:
             max_features = parameters['max_features']
 
-    clf = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, max_features=max_features)
+    clf = RandomForestClassifier(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth,
+                                 max_features=max_features)
     if trained:
         clf.fit(df_1, y)
     return clf
+
 
 def mlp(df_1, y, json_file, trained=True):
     '''
@@ -312,12 +312,14 @@ def mlp(df_1, y, json_file, trained=True):
         if 'learning_rate' in parameters:
             learning_rate = parameters['learning_rate']
 
-    clf = MLPClassifier(activation=activation, solver=solver, alpha=alpha, batch_size=batch_size, learning_rate=learning_rate)
+    clf = MLPClassifier(activation=activation, solver=solver, alpha=alpha, batch_size=batch_size,
+                        learning_rate=learning_rate)
     if trained:
         clf.fit(df_1, y)
     return clf
 
-def svm_stroke(df_1 , y):
+
+def svm_stroke(df_1, y):
     '''
     group of svms training function
     :param df_1: dataframe
@@ -339,6 +341,7 @@ def svm_stroke(df_1 , y):
         scores.append(accuracy_score(model.predict(df_1), y))
 
     return models[scores.index(max(scores))]
+
 
 def ensemble_stroke(df_1, y):
     '''
@@ -364,6 +367,3 @@ def ensemble_stroke(df_1, y):
         scores.append(accuracy_score(model.predict(df_1), y))
 
     return models[scores.index(max(scores))]
-
-
-

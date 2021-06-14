@@ -16,8 +16,8 @@ from sklearn.preprocessing import (OneHotEncoder,
 
 import warnings
 
-
 warnings.filterwarnings('ignore')
+
 
 def initial_preprocessor(
         data,
