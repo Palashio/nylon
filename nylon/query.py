@@ -15,8 +15,8 @@ class nylonProcessor:
         self.results = None
         self.custom_files = custom_files
         self.history = {}
-        self.id = uuid.uuid4()
         self.dataframe = None
+        self.latest_id = None
 
     def run(self, json_file_path, as_dict=False):
         '''
@@ -24,11 +24,13 @@ class nylonProcessor:
         :param json_file_path path to json file for
         '''
 
+
         if self.model is not None:
-            self.history[str(self.id)] = {'df': self.df, 'json': json_file_path, 'y': self.y, 'model': 'self.model', 'results': self.results}
+            self.history[str(id)] = {"id": self.latest_id, 'df': self.df, 'json': json_file_path, 'y': self.y, 'model': 'self.model', 'results': self.results}
 
 
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None, 'custom': self.custom_files}
+
         pipeline = [
             dataset_initializer,
             preprocess_module,
@@ -41,5 +43,6 @@ class nylonProcessor:
 
         self.results = request_info['analysis']
         self.model = request_info['model']
+        self.latest_id = uuid.uuid4()
 
         return self

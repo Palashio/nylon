@@ -28,6 +28,7 @@ class TestQueries(unittest.TestCase):
     with_trim = nylonProcessor('./data_storage/datasets/housing.csv')
     data_custom = nylonProcessor('./data_storage/datasets/housing.csv')
     voting_classifier = nylonProcessor('./data_storage/datasets/housing.csv')
+    test_history = nylonProcessor('./data_storage/datasets/housing.csv')
 
     """
     TEST QUERIES
@@ -64,6 +65,12 @@ class TestQueries(unittest.TestCase):
     def test_voting(self):
         value = self.voting_classifier.run('./data_storage/json/voting_classifiers.json')
         self.assertTrue(str(type(value)) == str(type(self.voting_classifier)))
+    @ordered
+    def test_history_functionality(self):
+        self.test_history.run('./data_storage/json/basic.json')
+        self.test_history.run('./data_storage/json/basic.json')
+        self.assertTrue(len(self.test_history.history) == 1)
+
 
 
 if __name__ == '__main__':
