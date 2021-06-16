@@ -1,1 +1,1 @@
-from .query import nylonProcessor
+from .query import Polymer

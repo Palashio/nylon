@@ -3,9 +3,9 @@ from nylon.supplementaries.handlers import (preprocess_module, modeling_module, 
 import uuid
 
 
-class nylonProcessor:
+class Polymer:
     '''
-    Constructor for the nylonProcessor class.
+    Constructor for the Polymer class.
     :param dataset_path is the path to the dataset
     :param save_model: whether the model should be saved in a .sav file
     '''

@@ -17,6 +17,19 @@ class DataReader():
         self.data = in_mem_data
         self.dataset_name = dataset_name
 
+    def elements_to_drop(self):
+        dropping = []
+        if "drop" not in self.data:
+            pass
+        else:
+            for element in self.data["drop"]:
+                if element == self.data["target"]:
+                    raise Exception(
+                        "Your target of --  {} -- cannot be the same as the columns you're trying to drop.".format(
+                            self.data["target"]))
+                dropping.append(element)
+        return dropping
+
     def data_reader(self):
         '''
         function to activate the data reading
@@ -28,16 +41,7 @@ class DataReader():
         else:
             data_type = self.data['type']
 
-        dropping = []
-        if "drop" not in self.data:
-            pass
-        else:
-            for element in self.data["drop"]:
-                if element == self.data["target"]:
-                    raise Exception(
-                        "Your target of --  {} -- cannot be the same as the columns you're trying to drop.".format(
-                            self.data["target"]))
-                dropping.append(element)
+        dropping = self.elements_to_drop()
 
         if data_type == 'csv':
             frame = self.csv(self.dataset_name, drop=dropping)

@@ -1,4 +1,4 @@
-from nylon.query import nylonProcessor
+from nylon.query import Polymer
 
 import unittest
 
@@ -21,14 +21,14 @@ unittest.defaultTestLoader.sortTestMethodsUsing = compare
 
 
 class TestQueries(unittest.TestCase):
-    basic_process = nylonProcessor('./data_storage/datasets/housing.csv')
-    without_preprocessor = nylonProcessor('./data_storage/datasets/housing.csv')
-    multiple_models = nylonProcessor('./data_storage/datasets/housing.csv')
-    all_analysis = nylonProcessor('./data_storage/datasets/housing.csv')
-    with_trim = nylonProcessor('./data_storage/datasets/housing.csv')
-    data_custom = nylonProcessor('./data_storage/datasets/housing.csv')
-    voting_classifier = nylonProcessor('./data_storage/datasets/housing.csv')
-    test_history = nylonProcessor('./data_storage/datasets/housing.csv')
+    basic_process = Polymer('./data_storage/datasets/housing.csv')
+    without_preprocessor = Polymer('./data_storage/datasets/housing.csv')
+    multiple_models = Polymer('./data_storage/datasets/housing.csv')
+    all_analysis = Polymer('./data_storage/datasets/housing.csv')
+    with_trim = Polymer('./data_storage/datasets/housing.csv')
+    data_custom = Polymer('./data_storage/datasets/housing.csv')
+    voting_classifier = Polymer('./data_storage/datasets/housing.csv')
+    test_history = Polymer('./data_storage/datasets/housing.csv')
 
     """
     TEST QUERIES
