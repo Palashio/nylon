@@ -49,7 +49,7 @@ class Polymer:
 
     def update_history(self, json_file_path):
         self.history[self.latest_id] = {'df': self.df, 'json': json_file_path, 'y': self.y,
-                                        'model': 'self.model', 'results': self.results}
+                                        'model': self.model, 'results': self.results}
 
 
     def set_class_after_run(self, request_info):
@@ -58,3 +58,6 @@ class Polymer:
 
         self.results = request_info['analysis']
         self.model = request_info['model']
+        self.json_file = request_info['json']
+        self.y = request_info['y']
+        self.df = request_info['df']
