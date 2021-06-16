@@ -4,7 +4,7 @@
  
  
 ` `  
- **A high-level english representation of machine learning; modify what you want and let us handle the rest.**
+ **A high-level english representation of machine learning. Save time. Modify what you want, let us handle the rest. **
 
  
 [![Build Status](https://www.travis-ci.com/Palashio/papyrus.svg?token=MFVyVfFQAs3abW7hagzw&branch=main)](https://www.travis-ci.com/Palashio/papyrus)
