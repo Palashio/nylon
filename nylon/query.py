@@ -28,8 +28,7 @@ class nylonProcessor:
         '''
 
         if self.model is not None:
-            self.history[self.latest_id] = {'df': self.df, 'json': json_file_path, 'y': self.y,
-                                     'model': 'self.model', 'results': self.results}
+            self.update_history(json_file_path)
 
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
                         'custom': self.custom_files}
@@ -44,9 +43,18 @@ class nylonProcessor:
         for a_step in pipeline:
             request_info = a_step(request_info)
 
-        self.results = request_info['analysis']
-        self.model = request_info['model']
+        self.set_class_after_run(request_info)
+
+        return self
+
+    def update_history(self, json_file_path):
+        self.history[self.latest_id] = {'df': self.df, 'json': json_file_path, 'y': self.y,
+                                        'model': 'self.model', 'results': self.results}
+
+
+    def set_class_after_run(self, request_info):
         new_id = str(uuid.uuid4())
         self.latest_id = new_id
 
-        return self
+        self.results = request_info['analysis']
+        self.model = request_info['model']
