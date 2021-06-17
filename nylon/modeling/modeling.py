@@ -319,7 +319,7 @@ def mlp(df_1, y, json_file, trained=True):
     return clf
 
 
-def svm_stroke(df_1, y):
+def svm_stroke(df_1, y, json_file):
     '''
     group of svms training function
     :param df_1: dataframe
