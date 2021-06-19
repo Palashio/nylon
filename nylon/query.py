@@ -60,4 +60,3 @@ class Polymer:
         self.model = request_info['model']
         self.json_file = request_info['json']
         self.y = request_info['y']
-        self.df = request_info['df']
