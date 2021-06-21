@@ -35,10 +35,9 @@ from sklearn.preprocessing import (OneHotEncoder,
 
 
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
-modeling_vocab = {'linear', 'svm', 'decision', 'sgd', 'neighbors', 'adaboost', 'gradient-boost', 'rf', 'svms', 'ensembles'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
+
 models = {"gradient-boost": gradient_boosting, "svm" : a_svm, "neighbors" : nearest_neighbors, "decision" : a_tree, "sgd" : sgd, "adaboost" : adaboost, 'rf' : rf, 'mlp' : mlp, 'svms' : svm_stroke, 'ensembles' : ensemble_stroke }
-just_models = {"svm", "neighbors", "decision", "sgd", "adaboost", "rf", "mlp"}
 
 def preprocess_module(request_info):
     json_file = request_info['json']
@@ -290,7 +289,7 @@ def modeling_module(request_info):
             fifty_train, _, fifty_y, _ = train_test_split(df['train'], y['train'], test_size=0.5)
 
             for a_model in type_model:
-                if a_model not in modeling_vocab:
+                if a_model not in models.keys():
                     raise Exception(
                         "The specified model -- {} -- is not in the list of available models".format(
                             a_model))
