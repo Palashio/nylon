@@ -194,13 +194,12 @@ def process_dates(data):
         df = data[df]
         datetime_cols = df.select_dtypes('datetime64')
         for col in datetime_cols:
-            if col in columns:
-                df[f'{col}_DayOfWeek'] = df[col].dt.day_name()
-                df[f'{col}_Year'] = df[col].dt.year
-                df[f'{col}_Month'] = df[col].dt.month_name()
-                df[f'{col}_MonthDay'] = df[col].dt.day
+            df[f'{col}_DayOfWeek'] = df[col].dt.day_name()
+            df[f'{col}_Year'] = df[col].dt.year
+            df[f'{col}_Month'] = df[col].dt.month_name()
+            df[f'{col}_MonthDay'] = df[col].dt.day
 
-                del df[col]
+            del df[col]
 
 
 # Preprocesses text for word embedding

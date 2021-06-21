@@ -1,7 +1,6 @@
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
-from pandas.api.types import is_numeric_dtype
 import os
 from sklearn.ensemble import BaggingClassifier
 import sys
@@ -9,29 +8,16 @@ from importlib import import_module
 import shutil
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
-from sklearn.preprocessing import OrdinalEncoder
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import VotingClassifier
 import ssl
 from sklearn.model_selection import cross_val_score
-from nylon.preprocessing.preprocessing import (initial_preprocessor, structured_preprocessor)
+from nylon.preprocessing.preprocessing import (initial_preprocessor)
 import nltk
-from nylon.preprocessing.preprocessing import process_dates
 import numpy as np
 import pandas as pd
-from sklearn.compose import ColumnTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from autocorrect import Speller
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
-from sklearn.preprocessing import (OneHotEncoder,
-                                   StandardScaler,
-                                   FunctionTransformer, LabelEncoder)
+from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
 
 
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
@@ -66,164 +52,25 @@ def preprocess_module(request_info):
                 os.remove("./buffer/temp.py")
 
             if element == "label-encode":
-                columns = preprocess['label-encode']
-
-                if isinstance(columns, str):
-                    columns = [columns]
-
-                for column in columns:
-                    enc = LabelEncoder()
-                    resulting_encoder = enc.fit_transform(df[column])
-                    df = df.assign(ocean_proximity=resulting_encoder)
-                    # df1 = df1.assign(e=e.values)
+                df = handle_label_encode(preprocess, df)
             if element == 'dates':
-                columns = preprocess['dates']
-
-                if isinstance(columns, str):
-                    columns = [columns]
-
-                df = process_dates(df, columns)
-
+                df = handle_dates(preprocess, df)
             if element == 'clean-text':
-                columns = preprocess['clean-text']
-                if isinstance(columns, str):
-                    columns = [columns]
-
-                df = text_preprocessing(df, columns)
+                df = handle_text(preprocess, df)
             if element == 'embed':
-                columns = preprocess['embed']
-                if isinstance(columns, str):
-                    columns = [columns]
-
-                df = embedding_preprocessor(df, columns)
-            # if element == 'tokenize':
-            #     columns = preprocess['tokenize']
-            #
-            #     if isinstance(columns, str):
-            #         columns = [columns]
-            #
-            #     df = tokenize_text(df, columns)
-
+                df = handle_embedding(preprocess, df)
             if element == "fill":
-                if preprocess['fill'] == 'ALL':
-                    df = df.dropna()
-                else:
-                    if 'column' not in preprocess['fill']:
-                        raise Exception("A target column should be specified with the -- column -- command.")
-                    if 'target' not in preprocess['fill']:
-                        target = 'nan'
-                    else:
-                        target = preprocess['fill']['target']
-
-                    if 'tactic' not in preprocess['fill']:
-                        tactic = 'mean'
-                    else:
-                        tactic = preprocess['fill']['tactic']
-
-                    columns = preprocess['fill']['column']
-                    if isinstance(columns, str):
-                        columns = [columns]
-
-                    for column in columns:
-                        column_transformed = np.array(df[column]).reshape(-1, 1)
-                        imputer = SimpleImputer(missing_values=(np.nan if target == 'nan' else target),
-                                                    strategy=tactic)
-
-                        df[column] = imputer.fit_transform(np.array(df[column]).reshape(-1, 1))
-
+                df = handle_filling(preprocess, df)
             if element == "scale":
-                columns = preprocess["scale"]
-
-                if isinstance(columns, str):
-                    columns = [columns]
-
-                for column in columns:
-                    if column not in df.columns:
-                        raise Exception(
-                                "The target column you provided -- {} -- does not exist".format(preprocess['scale']))
-                    if not is_numeric_dtype(df[column]):
-                            raise Exception("You can only scale numeric columns, your column was a boolean.")
-
-                    scaler = StandardScaler()
-                    df[column] = scaler.fit_transform(np.array(df[column]).reshape(-1, 1))
+                df = handle_scaling(preprocess, df)
             if element == 'min-max':
-                columns = preprocess["min-max"]
-
-                if isinstance(columns, str):
-                    columns = [columns]
-                for column in columns:
-                    if column not in df.columns:
-                        raise Exception(
-                                "The target column you provided -- {} -- does not exist".format(preprocess['min-max']))
-                    if not is_numeric_dtype(df[column]):
-                        raise Exception("You can only scale numeric columns, your column was a boolean.")
-
-                    scaler = MinMaxScaler()
-                    df[column] = scaler.fit_transform(np.array(df[column]).reshape(-1, 1))
-
+                df = handle_min_max(preprocess, df)
             if element == "ordinal":
-                if element == "ordinal":
-                    columns = preprocess['ordinal']
-
-                    if isinstance(columns, str):
-                        columns = [columns]
-
-                    for column in columns:
-                        enc = OrdinalEncoder()
-                        df[column] = enc.fit_transform(np.array(df[column]).reshape(-1, 1))
+                df = handle_ordinal(preprocess, df)
             if element == "importance":
-                number = preprocess['importance']
-
-                if not isinstance(number, int):
-                    raise Exception("Please provide the number of columns you'd like to remove based on importance")
-
-                forest = RandomForestRegressor()
-
-                target = json_file['data']['target']
-                y = df[target]
-                del df[target]
-
-                forest.fit(df, y)
-                importance = forest.feature_importances_
-
-                if number < 0:
-                    lowest_indices = importance.argsort()[:number * -1]
-
-                    for index, column in enumerate(df.columns):
-                        if index in lowest_indices:
-                            del df[column]
-                else:
-                    top_indices = np.argpartition(importance, number*-1)[number * 1:]
-
-                    for index, column in enumerate(df.columns):
-                        if index not in top_indices:
-                            del df[column]
-
-                df[target] = y.values
-
+                df = handle_importance(preprocess, df, json_file)
             if element == "one-hot":
-                columns = preprocess['one-hot']
-
-                if isinstance(columns, str):
-                    columns = [columns]
-
-                for column in columns:
-                    if is_numeric_dtype(column):
-                            raise Exception("You can only one hot encode on numeric columns, your column was a boolean.")
-                    if column == json_file['data']['target']:
-                        raise Exception("You cannot one-hot-encode the target column you've specified")
-
-                    label = LabelEncoder()
-                    df[column] = label.fit_transform(df[preprocess['one-hot']])
-
-                    enc = OneHotEncoder()
-                    columns = [column + str(i) for i in range(len(np.unique(df[column])))]
-                    enc_df = pd.DataFrame(enc.fit_transform(df[[column]]).toarray(), columns=columns)
-
-                    for value in enc_df.columns:
-                        df[value] = enc_df[value].values
-
-                    del df[column]
+                df = handle_one_hot(preprocess, df, json_file)
 
         target = json_file['data']['target']
         y = df[target]
@@ -451,38 +298,6 @@ def recalll(model, df, y):
     return float(recall_score(y['test'], output, average=average_value, labels=np.unique(output)))
 
 
-def text_preprocessing(combined, text_cols):
-    nltk_downloads()
-    lemmatizer = WordNetLemmatizer()
-    # combined = pd.concat([data['train'], data['test']], axis=0)
-
-    spell = Speller(fast=True)
-    for col in text_cols:
-        combined[col] = combined[col].apply(
-            lambda x: x.lower() if isinstance(x, str) else x)
-
-    stop_words = set(stopwords.words('english'))
-
-    for col in text_cols:
-        preprocessed_text = []
-        for words in combined[col]:
-            if words is not np.nan:
-                words = word_tokenize(words)
-                words = [word for word in words if word.isalpha()]
-                words = [word for word in words if word not in stop_words]
-                words = [spell(word) for word in words]
-                words = [lemmatizer.lemmatize(word) for word in words]
-
-                preprocessed_text.append(' '.join(words))
-
-            else:
-                preprocessed_text.append(np.nan)
-
-        combined[col] = preprocessed_text
-
-    return combined
-
-
 def nltk_downloads():
     try:
         _create_unverified_https_context = ssl._create_unverified_context
@@ -507,83 +322,9 @@ def feature_importances(model, df, y):
 
     return importance_dict
 
-# def tokenize_text(dataset, columns):
-#     nlp = English()
-#     # Create a Tokenizer with the default settings for English
-#     # including punctfuation rules and exceptions
-#     tokenizer = nlp.Defaults.create_tokenizer(nlp)
-#
-#     for column in columns:
-#         df_column = dataset[column]
-#         (df_column)
-#         for i, value in enumerate(df_column):
-#             df_column
-#         # for value in dataset[column]:
-#         #     dataset[column] = tokenizer(dataset[column])
-#         #     #(value)
-#
-#     return dataset
-
-def embedding_preprocessor(data, text):
-    full_pipeline = ColumnTransformer([], remainder="passthrough")
-    if len(text) != 0:
-        # Each text col needs a separate pipeline
-        for x in range(len(text)):
-            full_pipeline.transformers.append(
-                (f"text_{x}",
-                 Pipeline(
-                     [
-                         ('test',
-                          FunctionTransformer(
-                              lambda x: np.reshape(
-                                  x.to_numpy(),
-                                  (-1,
-                                   1)))),
-                         ('imputer',
-                          SimpleImputer(
-                              strategy="constant",
-                              fill_value="")),
-                         ('raveler',
-                          FunctionTransformer(
-                              lambda x: x.ravel(),
-                              accept_sparse=True)),
-                         ('vect',
-                          TfidfVectorizer()),
-                         ('densifier',
-                          FunctionTransformer(
-                              lambda x: x.todense(),
-                              accept_sparse=True)),
-                         ('embedder',
-                          FunctionTransformer(
-                              textembedder,
-                              accept_sparse=True))]),
-                    text[x]))
 
 
-    data_dict = {}
-    data_dict['train'] = data
-    train = full_pipeline.fit_transform(data_dict['train'])
-    # test = full_pipeline.transform(data['test'])
 
-
-    # Ternary clause because when running housing.csv,
-    # the product of preprocessing is np array, but not when using landslide
-    # data... not sure why
-    final_data = pd.DataFrame(
-        (train.toarray() if not isinstance(
-            train,
-            np.ndarray) else train),
-        columns=data.columns)
-
-    return final_data
-
-def textembedder(text):
-
-    total = list()
-    for i in text:
-        total.append(np.sum(i))
-
-    return np.reshape(total, (-1, 1))
 
 
 
