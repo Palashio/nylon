@@ -343,7 +343,7 @@ def svm_stroke(df_1, y, json_file):
     return models[scores.index(max(scores))]
 
 
-def ensemble_stroke(df_1, y):
+def ensemble_stroke(df_1, y, json_file):
     '''
     group of ensembles training function
     :param df_1: dataframe

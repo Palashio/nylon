@@ -29,6 +29,7 @@ class TestQueries(unittest.TestCase):
     data_custom = Polymer('./data_storage/datasets/housing.csv')
     voting_classifier = Polymer('./data_storage/datasets/housing.csv')
     test_history = Polymer('./data_storage/datasets/housing.csv')
+    using_strokes = Polymer('./data_storage/datasets/housing.csv')
 
     """
     TEST QUERIES
@@ -85,6 +86,14 @@ class TestQueries(unittest.TestCase):
         self.assertTrue(str(type(value)) == str(type(self.voting_classifier)))
 
     @ordered
+    def test_voting(self):
+        '''
+        Tests a JSON file with the modeling section including a voting classifier.
+        '''
+        value = self.voting_classifier.run('./data_storage/json/voting_classifiers.json')
+        self.assertTrue(str(type(value)) == str(type(self.voting_classifier)))
+
+    @ordered
     def test_history_functionality(self):
         '''
         Uses the basic.json specifications in order to test the storage of the information after multiple runs in the .history section.
@@ -93,6 +102,14 @@ class TestQueries(unittest.TestCase):
         self.test_history.run('./data_storage/json/basic.json')
         print(self.test_history.history)
         self.assertTrue(len(self.test_history.history) == 1)
+
+    @ordered
+    def test_strokes(self):
+        '''
+        Tests a JSON file with the modeling section including a voting classifier.
+        '''
+        value = self.using_strokes.run('./data_storage/json/using_strokes.json')
+        self.assertTrue(str(type(value)) == str(type(self.using_strokes)))
 
 
 if __name__ == '__main__':
