@@ -111,6 +111,15 @@ class TestQueries(unittest.TestCase):
         value = self.using_strokes.run('./data_storage/json/using_strokes.json')
         self.assertTrue(str(type(value)) == str(type(self.using_strokes)))
 
+    @ordered
+    def test_fetcher(self):
+        from nylon.fetcher import workflows
+
+        basic_loaded = workflows('basic')
+        ensemble_loaded = workflows('ensembles')
+
+        self.assertTrue(isinstance(basic_loaded, dict) and isinstance(basic_loaded, dict))
+
 
 if __name__ == '__main__':
     unittest.main()

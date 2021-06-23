@@ -1,0 +1,12 @@
+{
+    "data": {
+        "target": "YOUR_TARGET"
+    },
+    "preprocessor": {
+        "fill": "ALL",
+        "label-encode": "TARGET_COLUMN"
+    },
+    "modeling": {
+        "type": ["svms", "gradient-boost", "rf"]
+    }
+}
