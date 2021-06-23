@@ -35,7 +35,7 @@ pip install .
 
 ## Usage: the basics
 
-A new `Polymer` object should be created everytime you're working with a new dataset. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
+A new `Polymer` object should be created everytime you're working with a new dataset. When initializing an object, a dataset in the form of a ```.csv``` or ```.xs``` file should be passed to it by path:
 
 ```python
 nylon_object = Polymer('housing.csv')
