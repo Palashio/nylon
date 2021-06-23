@@ -6,19 +6,15 @@ from sklearn.ensemble import BaggingClassifier
 import sys
 from importlib import import_module
 import shutil
-from sklearn.metrics import precision_score, recall_score
-from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import VotingClassifier
 import ssl
-from sklearn.model_selection import cross_val_score
 from nylon.preprocessing.preprocessing import (initial_preprocessor)
 import nltk
-import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
-
+from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper
 
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
@@ -225,7 +221,7 @@ def analysis_module(request_info):
                         analysis_tuple['confusion_matrix'] = matrix
                     if analysis_type == 'pr':
                         analysis_tuple['precision'] = precision_calculation(model, df, y)
-                        analysis_tuple['recall'] = recalll(model, df, y)
+                        analysis_tuple['recall'] = recall_score_helper(model, df, y)
                     if analysis_type == 'importances':
                         analysis_tuple['importances'] = feature_importances(model, df, y)
                     if analysis_type == 'ALL':
@@ -257,45 +253,8 @@ def analysis_module(request_info):
     request_info['analysis'] = analysis_tuple
     return request_info
 
-def default_analysis(json_file, model, df, y):
-    acc_results = acc_score(model, df, y)
-    cv_results = cross_score(json_file, df, model, y)
-    matrix = confusion(model, df, y)
-    precise = precision_calculation(model, df, y)
-    recaller = recalll(model, df, y)
-    return acc_results, cv_results, matrix, precise, recaller
 
 
-def acc_score(model, df, y):
-    return accuracy_score(y['test'], model.predict(df['test']))
-
-def cross_score(json_file, df, model, y):
-    (y)
-    if 'analysis' in json_file:
-        cv_fold = (json_file['analysis']['spec'] if 'spec' in json_file['analysis'] else 5)
-    else:
-        cv_fold = 2
-    return cross_val_score(model, df['train'], y['train'], cv=cv_fold).tolist()
-
-def confusion(model, df, y):
-    unpacked_matrix = {}
-    matrix = confusion_matrix(model.predict(df['test']), y['test']).tolist()
-    for i, row in enumerate(matrix):
-        unpacked_matrix[str(i + 1)] = list(row)
-
-    return unpacked_matrix
-
-def precision_calculation(model, df, y):
-    output = model.predict(df['test'])
-    average_value = ('binary' if len(np.unique(y['test'])) == 2 else 'macro')
-
-
-    return float(precision_score(y['test'], output, average=average_value, labels=np.unique(output)))
-
-def recalll(model, df, y):
-    output = model.predict(df['test'])
-    average_value = ('binary' if len(np.unique(y['test'])) == 2 else 'macro')
-    return float(recall_score(y['test'], output, average=average_value, labels=np.unique(output)))
 
 
 def nltk_downloads():
