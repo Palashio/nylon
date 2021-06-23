@@ -35,13 +35,13 @@ pip install .
 
 ## Usage: the basics
 
-Nylon works through the `Polymer` object. Generally, a new object is creating everytime you're working with a new dataset. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
+A new `Polymer` object should be created everytime you're working with a new dataset. When initializing an object, a dataset in the form of a .csv or .xs file should be passed to it by path:
 
 ```python
 nylon_object = Polymer('housing.csv')
 ```
 
-Now, it's time to create a specifications file using the nylon grammar. Here's a basic one, that lets nylon handle most of the work. Nylon currently has four major parts in it's grammar: the data reader, preprocessor, modeler, and analysis modules. In the example below, you can see that we're specifying the target column under data (which is always required), and manually specifying the type of preprocessing we'd like. **Everything we haven't specified will be handled for us.**
+Now, it's time to create a specifications file using the nylon grammar. Here's a basic one, that lets Nylon handle most of the work. Nylon currently has four major parts in it's grammar: the data reader, preprocessor, modeler, and analysis modules. In the example below, you can see that we're specifying the target column under data (which is always required), and manually specifying the type of preprocessing we'd like. **Everything we haven't specified will be handled for us.**
 
 ```json
 {
