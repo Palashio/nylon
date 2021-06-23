@@ -81,9 +81,13 @@ nylon_object.run(json_file)
 This will return a fully trained nylon object. You can access all information about this particular iteration in the ```.results``` field of the object.
 
 ## Demos
+
+<div align="center">
+ 
 ![alt text](/data_storage/github_images/sk_to_nylon.png)
 ![alt text](/data_storage/github_images/sk_to_nylon_second.png)
-
+ 
+</div>
 ## Asking for help
 Welcome to the Nylon community!
 
