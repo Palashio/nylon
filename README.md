@@ -15,7 +15,7 @@
  
 ## Overview
 
-Nylon is a python library that lets you customize automated machine learning workflows through JSON like formats. Either use our built in grammar, add your own modules, or let Nylon handle the work for you. You get to choose the parts of the pipeline you modify, and we'll handle the rest.  
+Nylon is a python library that lets you customize automated machine learning workflows through a concise, JSON syntax. It provides a built in grammar, in which you can access different operations in ML with the english language. 
  
 ## Installation
 
