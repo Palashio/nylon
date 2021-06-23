@@ -88,6 +88,7 @@ This will return a fully trained nylon object. You can access all information ab
 ![alt text](/data_storage/github_images/sk_to_nylon_second.png)
  
 </div>
+
 ## Asking for help
 Welcome to the Nylon community!
 
