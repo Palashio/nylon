@@ -9,6 +9,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.ensemble import ExtraTreesClassifier
 
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -88,16 +90,15 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
         algorithm = 'auto'
         alpha = 0.0001
 
-        if 'params' in json_file:
-            parameters = json_file['params']
-            if 'n_neighbors' in json_file['params']:
-                n_neighbors = parameters['n_neighbors']
-            if 'weights' in json_file['params']:
-                weights = parameters['weights']
-            if 'algorithm' in json_file['params']:
-                algorithm = parameters['algorithm']
-            if 'alpha' in json_file['params']:
-                alpha = parameters['alpha']
+        parameters = json_file['params']
+        if 'n_neighbors' in parameters:
+            n_neighbors = parameters['n_neighbors']
+        if 'weights' in parameters:
+            weights = parameters['weights']
+        if 'algorithm' in parameters:
+            algorithm = parameters['algorithm']
+        if 'alpha' in parameters:
+            alpha = parameters['alpha']
 
         neigh = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm, alpha=alpha)
         clf = neigh.fit(sampled_df, sampled_y)
@@ -113,6 +114,7 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
             for x in range(min_neighbors, max_neighbors):
                 neigh = KNeighborsClassifier(n_neighbors=x)
                 neigh.fit(sampled_df, sampled_y)
+                neigh.fit(sampled_df, sampled_y)
                 a_score = accuracy_score(neigh.predict(sampled_df), sampled_y)
                 if a_score > best_score:
                     best_score = a_score
@@ -121,7 +123,7 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
 
             model = KNeighborsClassifier(n_neighbors=best_neighbors).fit(df_1, y)
 
-        return model
+    return model
 
 
 def a_tree(df_1, y, json_file, trained=True):
@@ -151,11 +153,23 @@ def a_tree(df_1, y, json_file, trained=True):
         if 'min_samples_leaf' in json_file['params']:
             min_samples_leaf = parameters['min_samples_leaf']
 
-    tree = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
+        tree = DecisionTreeClassifier(criterion=criterion, splitter=splitter, max_depth=max_depth,
                                   min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf)
+        if trained:
+            tree.fit(df_1, y)
 
-    if trained:
+    else:
+        grid_dict = {
+            'criterion': ['gini', 'entropy'],
+            'max_depth': range(1, 10),
+            'min_samples_split': [(x * 0.1) for x in range(1, 10)],
+            'min_samples_leaf': range(1, 5)
+        }
+        tree = DecisionTreeClassifier()
         tree.fit(df_1, y)
+
+        grid = GridSearchCV(tree, param_grid=grid_dict, verbose=0)
+        grid.fit(df_1, y)
 
     return tree
 
