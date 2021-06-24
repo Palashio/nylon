@@ -240,11 +240,24 @@ def gradient_boosting(df_1, y, json_file, trained=True):
         if 'criterion' in json_file['params']:
             criterion = parameters['criterion']
 
-    clf = GradientBoostingClassifier(loss=loss, learning_rate=learning_rate, n_estimators=n_estimators,
+        clf = GradientBoostingClassifier(loss=loss, learning_rate=learning_rate, n_estimators=n_estimators,
                                      criterion='friedman_mse')
 
-    if trained:
+        if trained:
+            clf.fit(df_1, y)
+    else:
+        parameters = {
+            "learning_rate": [0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2],
+            "criterion": ["friedman_mse", "mae"],
+            "n_estimators": range(5,15)
+        }
+        clf = GradientBoostingClassifier()
         clf.fit(df_1, y)
+        grid = GridSearchCV(clf, param_grid=parameters, verbose=1)
+
+        grid.fit(df_1, y)
+
+
 
     return clf
 
