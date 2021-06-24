@@ -21,6 +21,11 @@ class Polymer:
         self.dataframe = None
         self.latest_id = None
 
+        self.runPCA = True
+        if(self.runPCA):
+            self.pca_df = None
+            self.pca_model = None
+
     def run(self, json_file_path, as_dict=False):
         '''
         Runs the dataset on a json file specification
@@ -31,7 +36,7 @@ class Polymer:
             self.update_history(json_file_path)
 
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
-                        'custom': self.custom_files}
+                        'custom': self.custom_files, 'pca': self.runPCA}
 
         pipeline = [
             dataset_initializer,
@@ -39,6 +44,8 @@ class Polymer:
             modeling_module,
             analysis_module
         ]
+        
+        #pipeline = [dataset_initializer, preprocess_module]
 
         for a_step in pipeline:
             request_info = a_step(request_info)
@@ -60,3 +67,7 @@ class Polymer:
         self.model = request_info['model']
         self.json_file = request_info['json']
         self.y = request_info['y']
+
+        if(self.runPCA):
+            self.pca_df = request_info['pca_df']
+            self.pca_model = request_info['pca_model']

@@ -132,3 +132,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
+
+#Files to experiment around in before incorportating stuff in the main library
+playground/

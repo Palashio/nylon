@@ -12,6 +12,7 @@ from nylon.preprocessing.preprocessing import (initial_preprocessor)
 import nltk
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
 from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper
@@ -88,6 +89,18 @@ def preprocess_module(request_info):
             raise Exception("The preprocessing modules you provided is not sufficient")
     else:
         df, y = initial_preprocessor(df, json_file)
+
+    perform_pca = request_info['pca']
+    if(perform_pca):
+        train_x, test_x = df['train'], df['test']
+        x_data = pd.concat([train_x, test_x])
+        pca_model = PCA()
+        fitted_pca = pca_model.fit(x_data)
+        transformed_x = fitted_pca.transform(x_data)
+        X_train, X_test = train_test_split(transformed_x, test_size=0.2)
+        df_pca = {'train' : X_train, 'test' : X_test}
+        request_info['pca_df'] = df_pca
+        request_info['pca_model'] = fitted_pca
 
     request_info['df'] = df
     request_info['y'] = y
