@@ -1,5 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
+import numpy as np
 from sklearn.linear_model import SGDClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import GradientBoostingClassifier
@@ -199,10 +200,18 @@ def sgd(df_1, y, json_file, trained=True):
         if 'max_iter' in json_file['params']:
             max_iter = parameters['max_iter']
 
-    clf = SGDClassifier(loss=loss, alpha=alpha, fit_intercept=fit_intercept, max_iter=max_iter)
+        clf = SGDClassifier(loss=loss, alpha=alpha, fit_intercept=fit_intercept, max_iter=max_iter)
 
-    if trained:
+        if trained:
+            clf.fit(df_1, y)
+    else:
+        param_grid = {'average': [True, False],
+                      'alpha': np.power(10, np.arange(-4, 1, dtype=float))}
+        clf = SGDClassifier()
         clf.fit(df_1, y)
+
+        grid = GridSearchCV(clf, param_grid=param_grid, verbose=1)
+        clf = grid.fit(df_1, y)
 
     return clf
 
