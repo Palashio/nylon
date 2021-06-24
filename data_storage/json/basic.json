@@ -8,6 +8,6 @@
         "label-encode": "ocean_proximity"
     },
     "modeling": {
-        "type": "gradient-boost"
+        "type": "tree"
     }
 }
