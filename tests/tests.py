@@ -125,7 +125,17 @@ class TestQueries(unittest.TestCase):
     def testing_tree(self):
         value = self.test_tree.run('./data_storage/json/basic.json')
         self.assertTrue(str(type(value)) == str(type(self.test_tree)))
-
+    
+    @ordered
+    def test_pca_conversion(self):
+        housing_file = './data_storage/datasets/housing.csv'
+        basic_json = './data_storage/json/basic.json'
+        simple = Polymer(housing_file)
+        simple.pcaDebug = True
+        simple.runPCA = True
+        value = simple.run(basic_json)
+        original_train_x = value.transformToInput(value.pca_df_trans['train'])
+        self.assertTrue(str(value.pca_df['train'].shape) == str(original_train_x.shape))
 
 if __name__ == '__main__':
     unittest.main()

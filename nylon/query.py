@@ -1,7 +1,7 @@
 from nylon.supplementaries.main import dataset_initializer
 from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
 import uuid
-
+import pandas as pd
 
 class Polymer:
     '''
@@ -21,10 +21,13 @@ class Polymer:
         self.dataframe = None
         self.latest_id = None
 
-        self.runPCA = True
+        self.pcaDebug = False
+        self.runPCA = False
         if(self.runPCA):
             self.pca_df = None
+            self.pca_df_trans = None
             self.pca_model = None
+            self.column_names = None
 
     def run(self, json_file_path, as_dict=False):
         '''
@@ -45,7 +48,8 @@ class Polymer:
             analysis_module
         ]
         
-        #pipeline = [dataset_initializer, preprocess_module]
+        if(self.pcaDebug):
+            pipeline = [dataset_initializer, preprocess_module]
 
         for a_step in pipeline:
             request_info = a_step(request_info)
@@ -68,6 +72,28 @@ class Polymer:
         self.json_file = request_info['json']
         self.y = request_info['y']
 
-        if(self.runPCA):
-            self.pca_df = request_info['pca_df']
+        if(self.runPCA and 'pca_model' in request_info):
             self.pca_model = request_info['pca_model']
+            self.column_names = request_info['original_names']
+            self.pca_df = request_info['pca_df']
+            self.pca_df_trans = dict()
+            self.pca_df_trans['train'] = self.transformToPrinciple(self.pca_df['train'])
+            self.pca_df_trans['test'] = self.transformToPrinciple(self.pca_df['test'])
+    
+    def transformToPrinciple(self, values):
+        if not self.runPCA:
+            return None
+        transformed = self.pca_model.transform(values)
+        num_columns = transformed.shape[1]
+        column_names = ["Principal#" + str(i + 1) for i in range(num_columns)]
+        transform_df = pd.DataFrame(transformed, columns = column_names)
+        return transform_df
+    
+    def transformToInput(self, transformed): 
+        if not self.runPCA:
+            return None
+        original = self.pca_model.inverse_transform(transformed)
+        num_columns = original.shape[1]
+        assert num_columns == len(self.column_names)
+        original_df = pd.DataFrame(original, columns = self.column_names)
+        return original_df
