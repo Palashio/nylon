@@ -64,10 +64,20 @@ def a_svm(df_1, y, json_file, trained=True):
         if 'kernel' in json_file['params']:
             kernel = parameters['kernel']
 
-    clf = svm.SVC(degree=degree, gamma=gamma, kernel=kernel)
+        clf = svm.SVC(degree=degree, gamma=gamma, kernel=kernel)
 
-    if trained:
+        if trained:
+            clf.fit(df_1, y)
+    else:
+        param_grid = {'C': [0.1, 1, 10, 100],
+                      'gamma': [1, 0.1, 0.01, 0.001],
+                      'kernel': ['rbf', 'linear']}
+        clf = svm.SVC()
         clf.fit(df_1, y)
+
+        grid = GridSearchCV(clf, param_grid=param_grid)
+        clf = grid.fit(df_1, y)
+
 
     return clf
 
