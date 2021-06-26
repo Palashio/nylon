@@ -97,8 +97,7 @@ def preprocess_module(request_info):
         pca_model = PCA()
         fitted_pca = pca_model.fit(x_data)
         X_train, X_test = train_test_split(x_data, test_size=0.2)
-        df_pca = {'train' : X_train, 'test' : X_test}
-        request_info['pca_df'] = df_pca
+        df = {'train' : X_train, 'test' : X_test}
         request_info['pca_model'] = fitted_pca
         request_info['original_names'] = list(x_data.columns)
     request_info['df'] = df
@@ -111,7 +110,6 @@ def modeling_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
     y = request_info['y']
-
 
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
@@ -141,7 +139,7 @@ def modeling_module(request_info):
                 type_model = [type_model]
 
 
-            fifty_train, _, fifty_y, _ = train_test_split(df['train'], y['train'], test_size=0.5)
+            fifty_train, _, fifty_y, _ = train_test_split(df['train'], y['train'], test_size=0.05)
 
             for a_model in type_model:
                 if a_model not in models.keys():
