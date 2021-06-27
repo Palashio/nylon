@@ -8,6 +8,6 @@
         "label-encode": "ocean_proximity"
     },
     "modeling": {
-        "voting": ["svm", "rf"]
+        "voting": ["neighbors", "rf"]
     }
 }

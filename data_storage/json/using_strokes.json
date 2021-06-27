@@ -3,6 +3,6 @@
         "target": "ocean_proximity"
     },
     "modeling": {
-        "type": ["ensembles", "svms"]
+        "type": ["ensembles", "neighbors"]
     }
 }
