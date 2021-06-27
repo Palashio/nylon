@@ -91,9 +91,6 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
     :return compiled nearest_neighbors model
     '''
 
-    sample_amount = int(len(df_1) * 0.5)
-    sampled_df = df_1.iloc[:sample_amount]
-    sampled_y = y.iloc[:sample_amount]
 
     if 'params' in json_file:
         n_neighbors = 5
@@ -112,8 +109,10 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
             alpha = parameters['alpha']
 
         neigh = KNeighborsClassifier(n_neighbors=n_neighbors, weights=weights, algorithm=algorithm, alpha=alpha)
-        clf = neigh.fit(sampled_df, sampled_y)
-        return clf
+
+        if trained:
+            neigh.fit(df_1, y)
+        return neigh
     else:
         min_neighbors = 3
         max_neighbors = 13
@@ -122,6 +121,11 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
         best_neighbors = 0
 
         if trained:
+
+            sample_amount = int(len(df_1) * 0.5)
+            sampled_df = df_1.iloc[:sample_amount]
+            sampled_y = y.iloc[:sample_amount]
+
             for x in range(min_neighbors, max_neighbors):
                 neigh = KNeighborsClassifier(n_neighbors=x)
                 neigh.fit(sampled_df, sampled_y)
@@ -133,7 +137,8 @@ def nearest_neighbors(df_1, y, json_file, trained=True):
                     best_model = neigh
 
             model = KNeighborsClassifier(n_neighbors=best_neighbors).fit(df_1, y)
-
+        else:
+            model = KNeighborsClassifier()
     return model
 
 
