@@ -98,8 +98,10 @@ def preprocess_module(request_info):
         fitted_pca = pca_model.fit(x_data)
         X_train, X_test = train_test_split(x_data, test_size=0.2)
         df = {'train' : X_train, 'test' : X_test}
-        request_info['pca_model'] = fitted_pca
-        request_info['original_names'] = list(x_data.columns)
+        request_info['info'] = dict()
+        pca_dict = request_info['info']
+        pca_dict['pca_model'] = fitted_pca
+        pca_dict['original_names'] = list(x_data.columns)
     request_info['df'] = df
     request_info['y'] = y
 

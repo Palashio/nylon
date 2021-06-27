@@ -72,8 +72,9 @@ class Polymer:
 
         preprocess_module(request_info)
         
-        self.column_names = request_info['original_names']
-        self.pca_model = request_info['pca_model']
+        pca_dict = request_info['info']
+        self.column_names = pca_dict['original_names']
+        self.pca_model = pca_dict['pca_model']
         self.df = request_info['df']
         self.df_trans = dict()
         self.df_trans['train'] = self.transformToPrinciple(self.df['train'])
