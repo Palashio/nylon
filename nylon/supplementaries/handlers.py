@@ -139,17 +139,15 @@ def modeling_module(request_info):
                 type_model = [type_model]
 
 
-            fifty_train, _, fifty_y, _ = train_test_split(df['train'], y['train'], test_size=0.05)
+            fifty_train, _, fifty_y, _ = train_test_split(df['train'], y['train'], test_size=0.5)
 
             for a_model in type_model:
                 if a_model not in models.keys():
                     raise Exception(
                         "The specified model -- {} -- is not in the list of available models".format(
                             a_model))
-
                 model = models[a_model](fifty_train, fifty_y, json_file=json_file['modeling'])
                 model_storage.append(model)
-
                 curr_acc = accuracy_score(model.predict(df['test']), y['test'])
                 accs.append(curr_acc)
 

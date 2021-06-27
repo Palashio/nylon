@@ -28,14 +28,14 @@ class Polymer:
         Runs the dataset on a json file specification
         :param json_file_path path to json file for
         '''
-
+        self.runPCA = False
         new_id = str(uuid.uuid4())
         self.latest_id = new_id
         
         if self.model is not None:
             self.update_history(json_file_path)
 
-        request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
+        request_info = {'df': self.df_path, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
                         'custom': self.custom_files, 'pca': self.runPCA}
 
         pipeline = [
@@ -65,7 +65,7 @@ class Polymer:
         if self.model is not None:
             self.update_history(json_file_path)
 
-        request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
+        request_info = {'df': self.df_path, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
                         'custom': self.custom_files, 'pca': self.runPCA}
         
         dataset_initializer(request_info)
@@ -80,10 +80,7 @@ class Polymer:
         self.df_trans['test'] = self.transformToPrinciple(self.df['test'])
         request_info['df'] = self.df_trans
         
-        #print("Running modeling module")
         modeling_module(request_info)
-        #print("Finished running modelling module with model")
-        #print(request_info['model'])
         analysis_module(request_info)
 
         self.set_class_after_run(request_info)

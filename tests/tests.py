@@ -132,8 +132,8 @@ class TestQueries(unittest.TestCase):
         basic_json = './data_storage/json/basic.json'
         simple = Polymer(housing_file)
         value = simple.runwithPCA(basic_json)
-        inverse_x = value.transformToInput(value.df_trans['train'])
-        inverse_shape = str(inverse_x.shape)
+        original_train_x = value.transformToInput(value.df_trans['train'])
+        inverse_shape = str(original_train_x.shape)
         actual_shape = str(value.df['train'].shape)
         self.assertTrue(inverse_shape == actual_shape)
 
