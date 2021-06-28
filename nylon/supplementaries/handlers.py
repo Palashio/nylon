@@ -97,16 +97,20 @@ def preprocess_module(request_info):
         pca_model = PCA()
         fitted_pca = pca_model.fit(x_data)
         X_train, X_test = train_test_split(x_data, test_size=0.2)
-        df = {'train' : X_train, 'test' : X_test}
-        request_info['info'] = dict()
-        pca_dict = request_info['info']
-        pca_dict['pca_model'] = fitted_pca
-        pca_dict['original_names'] = list(x_data.columns)
+        X_train_pca = applyPCATransformation(fitted_pca, X_train)
+        X_test_pca = applyPCATransformation(fitted_pca, X_test)
+        df = {'train' : X_train_pca, 'test' : X_test_pca}
     request_info['df'] = df
     request_info['y'] = y
 
     return request_info
 
+def applyPCATransformation(pca_model, values):
+    transformed = pca_model.transform(values)
+    num_columns = transformed.shape[1]
+    column_names = ["Principal#" + str(i + 1) for i in range(num_columns)]
+    transform_df = pd.DataFrame(transformed, columns = column_names)
+    return transform_df
 
 def modeling_module(request_info):
     json_file = request_info['json']

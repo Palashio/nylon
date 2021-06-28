@@ -131,11 +131,15 @@ class TestQueries(unittest.TestCase):
         housing_file = './data_storage/datasets/housing.csv'
         basic_json = './data_storage/json/basic.json'
         simple = Polymer(housing_file)
-        value = simple.runwithPCA(basic_json)
-        original_train_x = value.transformToInput(value.df_trans['train'])
-        inverse_shape = str(original_train_x.shape)
-        actual_shape = str(value.df['train'].shape)
-        self.assertTrue(inverse_shape == actual_shape)
+        value = simple.run(basic_json, perform_PCA = True)
+        trained_values = value.dataframe['train']
+        columns_transformed = True
+        column_names = list(trained_values.columns)
+        for name in column_names:
+            if "#" not in name:
+                columns_transformed = False
+                break 
+        self.assertTrue(columns_transformed)
 
 if __name__ == '__main__':
     unittest.main()
