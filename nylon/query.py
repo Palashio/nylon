@@ -20,9 +20,9 @@ class Polymer:
         self.history = {}
         self.dataframe = None
         self.latest_id = None
-        self.debug = True
+        self.debug = False
 
-    def run(self, json_file_path, as_dict=False, perform_PCA = False):
+    def run(self, json_file_path, as_dict=False, perform_PCA = True):
         '''
         Runs the dataset on a json file specification
         :param json_file_path path to json file for

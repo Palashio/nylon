@@ -76,7 +76,6 @@ def preprocess_module(request_info):
         X_train, X_test, y_train, y_test = train_test_split(
                 df, y, test_size=0.2)
 
-
         df = {
                 'train': pd.concat([X_train], axis=1),
                 'test': pd.concat([X_test], axis=1)
