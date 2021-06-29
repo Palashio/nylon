@@ -1,7 +1,7 @@
 from nylon.supplementaries.main import dataset_initializer
 from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module)
 import uuid
-
+import pandas as pd
 
 class Polymer:
     '''
@@ -20,25 +20,28 @@ class Polymer:
         self.history = {}
         self.dataframe = None
         self.latest_id = None
+        self.debug = False
 
-    def run(self, json_file_path, as_dict=False):
+    def run(self, json_file_path, as_dict=False, perform_PCA = True):
         '''
         Runs the dataset on a json file specification
         :param json_file_path path to json file for
         '''
-
+        new_id = str(uuid.uuid4())
+        self.latest_id = new_id
+        
         if self.model is not None:
             self.update_history(json_file_path)
 
         request_info = {'df': self.df, 'json': json_file_path, 'y': None, 'model': 'None', 'analysis': None,
-                        'custom': self.custom_files}
+                        'custom': self.custom_files, 'pca': perform_PCA}
 
-        pipeline = [
-            dataset_initializer,
-            preprocess_module,
-            modeling_module,
-            analysis_module
-        ]
+        pipeline = None
+
+        if(self.debug):
+            pipeline = [dataset_initializer, preprocess_module]
+        else: 
+            pipeline = [dataset_initializer, preprocess_module, modeling_module, analysis_module]
 
         for a_step in pipeline:
             request_info = a_step(request_info)
@@ -53,10 +56,8 @@ class Polymer:
 
 
     def set_class_after_run(self, request_info):
-        new_id = str(uuid.uuid4())
-        self.latest_id = new_id
-
         self.results = request_info['analysis']
         self.model = request_info['model']
         self.json_file = request_info['json']
         self.y = request_info['y']
+        self.dataframe = request_info['df']

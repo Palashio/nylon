@@ -12,6 +12,7 @@ from nylon.preprocessing.preprocessing import (initial_preprocessor)
 import nltk
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
 from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper
@@ -75,7 +76,6 @@ def preprocess_module(request_info):
         X_train, X_test, y_train, y_test = train_test_split(
                 df, y, test_size=0.2)
 
-
         df = {
                 'train': pd.concat([X_train], axis=1),
                 'test': pd.concat([X_test], axis=1)
@@ -89,17 +89,32 @@ def preprocess_module(request_info):
     else:
         df, y = initial_preprocessor(df, json_file)
 
+    perform_pca = request_info['pca']
+    if(perform_pca):
+        train_x, test_x = df['train'], df['test']
+        x_data = pd.concat([train_x, test_x])
+        pca_model = PCA()
+        fitted_pca = pca_model.fit(x_data)
+        X_train, X_test = train_test_split(x_data, test_size=0.2)
+        X_train_pca = applyPCATransformation(fitted_pca, X_train)
+        X_test_pca = applyPCATransformation(fitted_pca, X_test)
+        df = {'train' : X_train_pca, 'test' : X_test_pca}
     request_info['df'] = df
     request_info['y'] = y
 
     return request_info
 
+def applyPCATransformation(pca_model, values):
+    transformed = pca_model.transform(values)
+    num_columns = transformed.shape[1]
+    column_names = ["Principal#" + str(i + 1) for i in range(num_columns)]
+    transform_df = pd.DataFrame(transformed, columns = column_names)
+    return transform_df
 
 def modeling_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
     y = request_info['y']
-
 
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
@@ -136,10 +151,8 @@ def modeling_module(request_info):
                     raise Exception(
                         "The specified model -- {} -- is not in the list of available models".format(
                             a_model))
-
                 model = models[a_model](fifty_train, fifty_y, json_file=json_file['modeling'])
                 model_storage.append(model)
-
                 curr_acc = accuracy_score(model.predict(df['test']), y['test'])
                 accs.append(curr_acc)
 
