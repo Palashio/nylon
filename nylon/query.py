@@ -21,6 +21,8 @@ class Polymer:
         self.dataframe = None
         self.latest_id = None
         self.debug = False
+        self.col_names = None
+        self.pca_model = None
 
     def run(self, json_file_path, as_dict=False, perform_PCA = True):
         '''
@@ -39,7 +41,7 @@ class Polymer:
         pipeline = None
 
         if(self.debug):
-            pipeline = [dataset_initializer, preprocess_module]
+            pipeline = [dataset_initializer, preprocess_module, modeling_module]
         else: 
             pipeline = [dataset_initializer, preprocess_module, modeling_module, analysis_module]
 
@@ -61,3 +63,7 @@ class Polymer:
         self.json_file = request_info['json']
         self.y = request_info['y']
         self.dataframe = request_info['df']
+
+        self.col_names = request_info['col_names']
+        if 'pca_model' in request_info:
+            self.pca_model = request_info['pca_model']
