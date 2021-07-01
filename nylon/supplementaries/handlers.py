@@ -11,6 +11,7 @@ import ssl
 from nylon.preprocessing.preprocessing import (initial_preprocessor)
 import nltk
 import pandas as pd
+import time
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
@@ -89,12 +90,17 @@ def preprocess_module(request_info):
     else:
         df, y = initial_preprocessor(df, json_file)
 
+    x_train, y_train = df['train'], y['train']
+    x_cols, y_col = list(x_train.columns), str(y_train.name)
+    request_info['col_names'] = { 'x' : x_cols, 'y' : y_col }
+
     perform_pca = request_info['pca']
     if(perform_pca):
         train_x, test_x = df['train'], df['test']
         x_data = pd.concat([train_x, test_x])
         pca_model = PCA()
         fitted_pca = pca_model.fit(x_data)
+        request_info['pca_model'] = fitted_pca
         X_train, X_test = train_test_split(x_data, test_size=0.2)
         X_train_pca = applyPCATransformation(fitted_pca, X_train)
         X_test_pca = applyPCATransformation(fitted_pca, X_test)
