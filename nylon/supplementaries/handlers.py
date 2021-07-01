@@ -272,10 +272,6 @@ def analysis_module(request_info):
     request_info['analysis'] = analysis_tuple
     return request_info
 
-
-
-
-
 def nltk_downloads():
     try:
         _create_unverified_https_context = ssl._create_unverified_context
@@ -299,11 +295,4 @@ def feature_importances(model, df, y):
 
 
     return importance_dict
-
-
-
-
-
-
-
 
