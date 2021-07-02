@@ -1,3 +1,5 @@
+from pandas.core.algorithms import mode
+from pandas.io import json
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -17,6 +19,7 @@ from sklearn.decomposition import PCA
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
 from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper
+from nylon.data.reader import DataReader
 
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
@@ -29,6 +32,7 @@ def preprocess_module(request_info):
 
     if 'preprocessor' in json_file:
         preprocess = json_file['preprocessor']
+        
         for element in preprocess:
             if element not in preprocess_vocab:
                 raise Exception("Your specificed preprocessing technique -- {} -- is not supported".format(element))
@@ -74,6 +78,7 @@ def preprocess_module(request_info):
         y = df[target]
 
         del df[target]
+
         X_train, X_test, y_train, y_test = train_test_split(
                 df, y, test_size=0.2)
 
@@ -94,7 +99,9 @@ def preprocess_module(request_info):
     x_cols, y_col = list(x_train.columns), str(y_train.name)
     request_info['col_names'] = { 'x' : x_cols, 'y' : y_col }
 
-    perform_pca = request_info['pca']
+    perform_pca = 'pca' in request_info
+    if(perform_pca):
+        perform_pca = request_info['pca']
     if(perform_pca):
         train_x, test_x = df['train'], df['test']
         x_data = pd.concat([train_x, test_x])
@@ -121,6 +128,8 @@ def modeling_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
     y = request_info['y']
+
+    print("Staring to train the model")
 
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
@@ -190,6 +199,7 @@ def modeling_module(request_info):
             bagging_classifier.fit(df['train'], y['train'])
             model = bagging_classifier
 
+    print("Modeling sucessfully trained")
     request_info['df'] = df
     request_info['model'] = model
     request_info['y'] = y
@@ -296,3 +306,29 @@ def feature_importances(model, df, y):
 
     return importance_dict
 
+def perform_inference(request_info):
+    input_file_path = request_info['input']
+    columns = request_info['cols']
+    x_cols, y_col = columns['x'], columns['y']
+    reader = DataReader({}, input_file_path)
+    input_data = reader.data_reader(error_checking = False)
+    model_input = pd.DataFrame()
+    for col in x_cols: 
+        if col in input_data:
+            model_input[col] = input_data[col].astype('float64')
+        else:
+            raise Exception("Column " + str(col) + " not in input data")
+    preprocessing_input = model_input.copy()
+    num_values = len(preprocessing_input.index)
+    preprocessing_input[y_col] = [0.0 for i in range(num_values)]
+    request_info['df'] = preprocessing_input
+    preprocess_module(request_info)
+    x_values = request_info['df']
+    train_x, test_x = x_values['train'], x_values['test']
+    model_input = pd.concat([train_x, test_x])
+    if 'pca-model' in request_info:
+        pca_model = request_info['pca-model']
+        model_input = applyPCATransformation(pca_model, model_input)
+    model = request_info['model']
+    result = model.predict(model_input)
+    print(result)
