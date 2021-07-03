@@ -32,6 +32,10 @@ def preprocess_module(request_info):
 
     if 'preprocessor' in json_file:
         preprocess = json_file['preprocessor']
+
+        target = json_file['data']['target']
+
+        target_transformers = []
         
         for element in preprocess:
             if element not in preprocess_vocab:
@@ -53,28 +57,37 @@ def preprocess_module(request_info):
                 sys.path.remove(sys_path)
                 os.remove("./buffer/temp.py")
 
-            if element == "label-encode":
-                df = handle_label_encode(preprocess, df)
-            if element == 'dates':
-                df = handle_dates(preprocess, df)
-            if element == 'clean-text':
-                df = handle_text(preprocess, df)
-            if element == 'embed':
-                df = handle_embedding(preprocess, df)
-            if element == "fill":
-                df = handle_filling(preprocess, df)
-            if element == "scale":
-                df = handle_scaling(preprocess, df)
-            if element == 'min-max':
-                df = handle_min_max(preprocess, df)
-            if element == "ordinal":
-                df = handle_ordinal(preprocess, df)
-            if element == "importance":
-                df = handle_importance(preprocess, df, json_file)
-            if element == "one-hot":
-                df = handle_one_hot(preprocess, df, json_file)
+            result = None
 
-        target = json_file['data']['target']
+            if element == "label-encode":
+                result = handle_label_encode(preprocess, df, target)
+            if element == 'dates':
+                result = handle_dates(preprocess, df)
+            if element == 'clean-text':
+                result = handle_text(preprocess, df)
+            if element == 'embed':
+                result = handle_embedding(preprocess, df)
+            if element == "fill":
+                result = handle_filling(preprocess, df)
+            if element == "scale":
+                result = handle_scaling(preprocess, df)
+            if element == 'min-max':
+                result = handle_min_max(preprocess, df, target)
+            if element == "ordinal":
+                result = handle_ordinal(preprocess, df, target)
+            if element == "importance":
+                result = handle_importance(preprocess, df, target)
+            if element == "one-hot":
+                result = handle_one_hot(preprocess, df, target)
+
+            df = result.pop()
+
+            if(len(result) > 0):
+                for transformer in result:
+                    target_transformers.append(transformer)
+        
+        request_info['target-transforms'] = target_transformers
+
         y = df[target]
 
         del df[target]
@@ -331,4 +344,12 @@ def perform_inference(request_info):
         model_input = applyPCATransformation(pca_model, model_input)
     model = request_info['model']
     result = model.predict(model_input)
-    print(result)
+    transformations = request_info['result-transforms']
+    if(transformations is not None ):
+        if(len(transformations) > 0): 
+            for transformer in reversed(transformations):
+                result = transformer.inverse_transform(result)
+    output = model_input
+    output.columns = x_cols
+    output[y_col] = result
+    return output

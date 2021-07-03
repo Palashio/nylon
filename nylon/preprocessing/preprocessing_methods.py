@@ -20,11 +20,13 @@ from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)
 
-def handle_scaling(preprocess, df):
+def handle_scaling(preprocess, df, target):
     columns = preprocess["scale"]
 
     if isinstance(columns, str):
         columns = [columns]
+    
+    result = []
 
     for column in columns:
         if column not in df.columns:
@@ -35,10 +37,18 @@ def handle_scaling(preprocess, df):
 
         scaler = StandardScaler()
         df[column] = scaler.fit_transform(np.array(df[column]).reshape(-1, 1))
-    return df
 
-def handle_min_max(preprocess, df):
+        if column == target:
+            result.append(scaler)
+
+    result.append(df)
+
+    return result
+
+def handle_min_max(preprocess, df, target):
     columns = preprocess["min-max"]
+
+    result = []
 
     if isinstance(columns, str):
         columns = [columns]
@@ -51,31 +61,42 @@ def handle_min_max(preprocess, df):
 
         scaler = MinMaxScaler()
         df[column] = scaler.fit_transform(np.array(df[column]).reshape(-1, 1))
-    return df
 
-def handle_label_encode(preprocess, df):
+        if(column == target):
+            result.append(scaler)
+    
+    result.append(df)
+    return result
+
+def handle_label_encode(preprocess, df, target):
     columns = preprocess['label-encode']
 
     if isinstance(columns, str):
         columns = [columns]
-
+    result = []
     for column in columns:
         enc = LabelEncoder()
         resulting_encoder = enc.fit_transform(df[column])
-        df = df.assign(ocean_proximity=resulting_encoder)
-    return df
+        df[column] = resulting_encoder
+        if(column == target):
+            result.append(enc)
+        
+    result.append(df)
+    return result
 
-def handle_ordinal(preprocess, df):
+def handle_ordinal(preprocess, df, target):
     columns = preprocess['ordinal']
 
     if isinstance(columns, str):
         columns = [columns]
-
+    result = []
     for column in columns:
         enc = OrdinalEncoder()
         df[column] = enc.fit_transform(np.array(df[column]).reshape(-1, 1))
-
-    return df
+        if(column == target):
+            result.append(enc)
+    result.append(df)
+    return result
 
 
 def handle_filling(preprocess, df):
@@ -105,8 +126,9 @@ def handle_filling(preprocess, df):
 
             df[column] = imputer.fit_transform(np.array(df[column]).reshape(-1, 1))
 
-    return df
-def handle_importance(preprocess, df, json_file):
+    return [df]
+
+def handle_importance(preprocess, df, target):
     number = preprocess['importance']
 
     if not isinstance(number, int):
@@ -114,7 +136,6 @@ def handle_importance(preprocess, df, json_file):
 
     forest = RandomForestRegressor()
 
-    target = json_file['data']['target']
     y = df[target]
     del df[target]
 
@@ -136,9 +157,9 @@ def handle_importance(preprocess, df, json_file):
 
     df[target] = y.values
 
-    return df
+    return [df]
 
-def handle_one_hot(preprocess, df, json_file):
+def handle_one_hot(preprocess, df, target):
     columns = preprocess['one-hot']
 
     if isinstance(columns, str):
@@ -147,7 +168,7 @@ def handle_one_hot(preprocess, df, json_file):
     for column in columns:
         if is_numeric_dtype(column):
             raise Exception("You can only one hot encode on numeric columns, your column was a boolean.")
-        if column == json_file['data']['target']:
+        if column == target:
             raise Exception("You cannot one-hot-encode the target column you've specified")
 
         label = LabelEncoder()
@@ -161,7 +182,8 @@ def handle_one_hot(preprocess, df, json_file):
             df[value] = enc_df[value].values
 
         del df[column]
-    return df
+
+    return [df]
 
 def handle_text(preprocess, df):
     columns = preprocess['clean-text']
@@ -170,7 +192,7 @@ def handle_text(preprocess, df):
 
     df = text_preprocessing(df, columns)
 
-    return df
+    return [df]
 
 def handle_embedding(preprocess, df):
     columns = preprocess['embed']
@@ -179,7 +201,7 @@ def handle_embedding(preprocess, df):
 
     df = embedding_preprocessor(df, columns)
 
-    return df
+    return [df]
 
 def handle_dates(preprocess, df):
     columns = preprocess['dates']
@@ -189,9 +211,7 @@ def handle_dates(preprocess, df):
 
     df = process_dates(df)
 
-
-
-    return df
+    return [df]
 
 
 def text_preprocessing(combined, text_cols):
