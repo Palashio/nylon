@@ -23,6 +23,7 @@ class Polymer:
         self.debug = True
         self.col_names = None
         self.pca_model = None
+        self.transforms = None
 
     def run(self, json_file_path, as_dict=False, perform_PCA = True):
         '''
@@ -68,9 +69,12 @@ class Polymer:
         self.col_names = request_info['col_names']
         if 'pca_model' in request_info:
             self.pca_model = request_info['pca_model']
+        self.transforms = request_info['target-transforms']
     
     def get_results(self, input_file):
-        request_info = {'input' : input_file, 'cols' : self.col_names, 'json' : self.json_file, 'model'  : self.model}
+        request_info = {'input' : input_file, 'cols' : self.col_names, 'json' : self.json_file, 
+        'model'  : self.model, 'result-transforms' : self.transforms}
         if self.pca_model is not None: 
             request_info['pca-model'] = self.pca_model
-        perform_inference(request_info)
+        output = perform_inference(request_info)
+        print(output)
