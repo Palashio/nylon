@@ -20,7 +20,7 @@ class Polymer:
         self.history = {}
         self.dataframe = None
         self.latest_id = None
-        self.debug = True
+        self.debug = False
         self.col_names = None
         self.pca_model = None
         self.transforms = None
@@ -71,10 +71,15 @@ class Polymer:
             self.pca_model = request_info['pca_model']
         self.transforms = request_info['target-transforms']
     
-    def get_results(self, input_file):
+    def get_results(self, input_file, output_file_path = ""):
         request_info = {'input' : input_file, 'cols' : self.col_names, 'json' : self.json_file, 
         'model'  : self.model, 'result-transforms' : self.transforms}
         if self.pca_model is not None: 
             request_info['pca-model'] = self.pca_model
         output = perform_inference(request_info)
-        print(output)
+        if(len(output_file_path) > 0):
+            if(output_file_path[-3 : ] == 'csv'):
+                output.to_csv(output_file_path, index = False)
+            elif(output_file_path[-4 : ] == 'json'):
+                output.to_json(output_file_path, orient='records')
+        return output
