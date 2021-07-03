@@ -338,7 +338,8 @@ def perform_inference(request_info):
     preprocess_module(request_info)
     x_values = request_info['df']
     train_x, test_x = x_values['train'], x_values['test']
-    model_input = pd.concat([train_x, test_x])
+    original_data = pd.concat([train_x, test_x])
+    model_input = original_data.copy()
     if 'pca-model' in request_info:
         pca_model = request_info['pca-model']
         model_input = applyPCATransformation(pca_model, model_input)
@@ -349,7 +350,7 @@ def perform_inference(request_info):
         if(len(transformations) > 0): 
             for transformer in reversed(transformations):
                 result = transformer.inverse_transform(result)
-    output = model_input
+    output = original_data
     output.columns = x_cols
     output[y_col] = result
     return output

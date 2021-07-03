@@ -1,5 +1,5 @@
 from nylon.query import Polymer
-
+import os
 import unittest
 
 
@@ -140,6 +140,22 @@ class TestQueries(unittest.TestCase):
                 columns_transformed = False
                 break 
         self.assertTrue(columns_transformed)
+    
+    @ordered
+    def test_inference(self):
+       housing_file = './data_storage/datasets/housing.csv'
+       basic_json = './data_storage/json/basic.json'
+       inference_file = './data_storage/datasets/inference-data/inference-input.csv'
+       output_file = './data_storage/datasets/inference-data/inference-output.csv'
+       if(os.path.exists(output_file)):
+           os.remove(output_file)
+       simple = Polymer(housing_file)
+       value = simple.run(basic_json, perform_PCA = True)
+       result = value.get_results(inference_file, output_file_path = output_file)
+       valid = 'ocean_proximity' in result
+       output_saved = os.path.exists(output_file)
+       self.assertTrue(valid and output_saved)
 
+        
 if __name__ == '__main__':
     unittest.main()
