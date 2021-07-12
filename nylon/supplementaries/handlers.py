@@ -20,9 +20,10 @@ from nylon.analysis.analysis import default_analysis, acc_score, cross_score, co
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
 
-models = {"gradient-boost": gradient_boosting, "svm" : a_svm, "neighbors" : nearest_neighbors, "decision" : a_tree, "sgd" : sgd, "adaboost" : adaboost, 'rf' : rf, 'mlp' : mlp, 'svms' : svm_stroke, 'ensembles' : ensemble_stroke }
+models = {"gradient-boost": gradient_boosting, "svm": a_svm, "neighbors": nearest_neighbors, "decision": a_tree, "sgd": sgd, "adaboost": adaboost, 'rf': rf, 'mlp': mlp, 'svms': svm_stroke, 'ensembles': ensemble_stroke}
 
 def preprocess_module(request_info):
+
     json_file = request_info['json']
     df = request_info['df']
 
@@ -293,6 +294,62 @@ def feature_importances(model, df, y):
 
 
     return importance_dict
+
+
+def preprocess_module_inference(request_info):
+
+    json_file = request_info['json']
+    df = request_info['df']
+
+    if 'preprocessor' in json_file:
+        preprocess = json_file['preprocessor']
+        for element in preprocess:
+            if element not in preprocess_vocab:
+                raise Exception("Your specificed preprocessing technique -- {} -- is not supported".format(element))
+            if element == "custom":
+
+                sys_path = "/nylon/supplementaries/buffer/"
+                sys.path.insert(1, os.getcwd() + sys_path)
+
+                absolute_path = os.path.abspath(os.getcwd()) + '/nylon/supplementaries/buffer/temp.py'
+
+                file_name = json_file['preprocessor']['custom']['loc'].rsplit("/")[-1]
+                shutil.copy(json_file['preprocessor']['custom']['loc'], absolute_path)
+
+                mod = import_module('temp')
+                new_func = getattr(mod, json_file['preprocessor']['custom']['name'])
+
+                df = new_func(df, json_file)
+                sys.path.remove(sys_path)
+                os.remove("./buffer/temp.py")
+
+            if element == "label-encode":
+                df = handle_label_encode(preprocess, df)
+            if element == 'dates':
+                df = handle_dates(preprocess, df)
+            if element == 'clean-text':
+                df = handle_text(preprocess, df)
+            if element == 'embed':
+                df = handle_embedding(preprocess, df)
+            if element == "fill":
+                df = handle_filling(preprocess, df)
+            if element == "scale":
+                df = handle_scaling(preprocess, df)
+            if element == 'min-max':
+                df = handle_min_max(preprocess, df)
+            if element == "ordinal":
+                df = handle_ordinal(preprocess, df)
+            if element == "importance":
+                df = handle_importance(preprocess, df, json_file)
+            if element == "one-hot":
+                df = handle_one_hot(preprocess, df, json_file)
+
+    else:
+        df, y = initial_preprocessor(df, json_file)
+
+    request_info['df'] = df
+
+    return request_info
 
 
 
