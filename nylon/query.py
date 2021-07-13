@@ -1,3 +1,4 @@
+from pandas.core.algorithms import mode
 from nylon.supplementaries.main import dataset_initializer
 from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module, perform_inference)
 import uuid

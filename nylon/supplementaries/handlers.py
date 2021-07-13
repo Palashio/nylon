@@ -30,6 +30,8 @@ def preprocess_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
 
+    shuffle_during_split = 'preserve' not in request_info
+
     if 'preprocessor' in json_file:
         preprocess = json_file['preprocessor']
 
@@ -81,19 +83,21 @@ def preprocess_module(request_info):
                 result = handle_one_hot(preprocess, df, target)
 
             df = result.pop()
-
+            columns = result.pop()
+            applied_to_target = target in columns
             if(len(result) > 0):
                 for transformer in result:
-                    target_transformers.append(transformer)
+                    if(applied_to_target):
+                        target_transformers.append(transformer)
         
-        request_info['target-transforms'] = target_transformers
+        request_info['transformers'] = target_transformers
 
         y = df[target]
 
         del df[target]
 
         X_train, X_test, y_train, y_test = train_test_split(
-                df, y, test_size=0.2)
+                df, y, test_size=0.2, shuffle = shuffle_during_split)
 
         df = {
                 'train': pd.concat([X_train], axis=1),
@@ -106,12 +110,14 @@ def preprocess_module(request_info):
         except:
             raise Exception("The preprocessing modules you provided is not sufficient")
     else:
-        df, y = initial_preprocessor(df, json_file)
+        json_file['shuffle'] = shuffle_during_split
+        df, y, target_transformers = initial_preprocessor(df, json_file)
+
+        request_info['target-transforms'] = target_transformers
 
     x_train, y_train = df['train'], y['train']
     x_cols, y_col = list(x_train.columns), str(y_train.name)
     request_info['col_names'] = { 'x' : x_cols, 'y' : y_col }
-
     perform_pca = 'pca' in request_info
     if(perform_pca):
         perform_pca = request_info['pca']
@@ -143,6 +149,7 @@ def modeling_module(request_info):
     y = request_info['y']
 
     print("Staring to train the model")
+    start_time = time.time()
 
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
@@ -211,8 +218,9 @@ def modeling_module(request_info):
 
             bagging_classifier.fit(df['train'], y['train'])
             model = bagging_classifier
-
-    print("Modeling sucessfully trained")
+    
+    end_time = time.time()
+    print("Modeling sucessfully trained in " + str(end_time - start_time) + " secs")
     request_info['df'] = df
     request_info['model'] = model
     request_info['y'] = y
@@ -335,6 +343,7 @@ def perform_inference(request_info):
     num_values = len(preprocessing_input.index)
     preprocessing_input[y_col] = [0.0 for i in range(num_values)]
     request_info['df'] = preprocessing_input
+    request_info['preserve'] = True
     preprocess_module(request_info)
     x_values = request_info['df']
     train_x, test_x = x_values['train'], x_values['test']
@@ -350,7 +359,6 @@ def perform_inference(request_info):
         if(len(transformations) > 0): 
             for transformer in reversed(transformations):
                 result = transformer.inverse_transform(result)
-    output = original_data
-    output.columns = x_cols
+    output = input_data
     output[y_col] = result
     return output

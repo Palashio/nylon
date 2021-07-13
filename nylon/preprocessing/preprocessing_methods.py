@@ -41,6 +41,7 @@ def handle_scaling(preprocess, df, target):
         if column == target:
             result.append(scaler)
 
+    result.append(columns)
     result.append(df)
 
     return result
@@ -52,6 +53,7 @@ def handle_min_max(preprocess, df, target):
 
     if isinstance(columns, str):
         columns = [columns]
+
     for column in columns:
         if column not in df.columns:
             raise Exception(
@@ -65,7 +67,9 @@ def handle_min_max(preprocess, df, target):
         if(column == target):
             result.append(scaler)
     
+    result.append(columns)
     result.append(df)
+
     return result
 
 def handle_label_encode(preprocess, df, target):
@@ -80,7 +84,8 @@ def handle_label_encode(preprocess, df, target):
         df[column] = resulting_encoder
         if(column == target):
             result.append(enc)
-        
+
+    result.append(columns)
     result.append(df)
     return result
 
@@ -95,11 +100,13 @@ def handle_ordinal(preprocess, df, target):
         df[column] = enc.fit_transform(np.array(df[column]).reshape(-1, 1))
         if(column == target):
             result.append(enc)
+    result.append(columns)
     result.append(df)
     return result
 
 
 def handle_filling(preprocess, df):
+    columns = []
     if preprocess['fill'] == 'ALL':
         df = df.dropna()
     else:
@@ -126,7 +133,7 @@ def handle_filling(preprocess, df):
 
             df[column] = imputer.fit_transform(np.array(df[column]).reshape(-1, 1))
 
-    return [df]
+    return [columns, df]
 
 def handle_importance(preprocess, df, target):
     number = preprocess['importance']
@@ -142,22 +149,26 @@ def handle_importance(preprocess, df, target):
     forest.fit(df, y)
     importance = forest.feature_importances_
 
+    columns = []
+
     if number < 0:
         lowest_indices = importance.argsort()[:number * -1]
 
         for index, column in enumerate(df.columns):
+            columns.append(column)
             if index in lowest_indices:
                 del df[column]
     else:
         top_indices = np.argpartition(importance, number * -1)[number * 1:]
 
         for index, column in enumerate(df.columns):
+            columns.append(column)
             if index not in top_indices:
                 del df[column]
 
     df[target] = y.values
 
-    return [df]
+    return [columns, df]
 
 def handle_one_hot(preprocess, df, target):
     columns = preprocess['one-hot']
@@ -183,7 +194,7 @@ def handle_one_hot(preprocess, df, target):
 
         del df[column]
 
-    return [df]
+    return [columns, df]
 
 def handle_text(preprocess, df):
     columns = preprocess['clean-text']
@@ -201,7 +212,7 @@ def handle_embedding(preprocess, df):
 
     df = embedding_preprocessor(df, columns)
 
-    return [df]
+    return [columns, df]
 
 def handle_dates(preprocess, df):
     columns = preprocess['dates']
@@ -211,7 +222,7 @@ def handle_dates(preprocess, df):
 
     df = process_dates(df)
 
-    return [df]
+    return [columns, df]
 
 
 def text_preprocessing(combined, text_cols):

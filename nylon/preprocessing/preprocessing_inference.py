@@ -35,11 +35,7 @@ def initial_preprocessor(
         'train': pd.concat([data], axis=1),
     }
 
-    full_pipeline = None
-    if True:
-        data, full_pipeline = structured_preprocessor(data)
-    else:
-        data.fillna(0, inplace=True)
+    data, full_pipeline = structured_preprocessor(data)
 
     return data
 
@@ -145,12 +141,11 @@ def structured_preprocessor(data, ca_threshold=0.5, text=[]):
 
 
 def process_dates(data):
-
     for df in data:
         df = data[df]
         datetime_cols = df.select_dtypes('datetime64')
         for col in datetime_cols:
-            if col in columns:
+            if col in df.columns:
                 df[f'{col}_DayOfWeek'] = df[col].dt.day_name()
                 df[f'{col}_Year'] = df[col].dt.year
                 df[f'{col}_Month'] = df[col].dt.month_name()
