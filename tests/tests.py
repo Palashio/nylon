@@ -1,4 +1,5 @@
 import os,sys
+sys.path.append(os.getcwd())
 from nylon.query import Polymer
 import unittest
 
@@ -157,7 +158,7 @@ class TestQueries(unittest.TestCase):
        self.assertTrue(valid and output_saved)
     
     @ordered
-    def test_inference_no_preprocessor(self):
+    def test_inference_no_pre(self):
         housing_file = './data_storage/datasets/housing.csv'
         json_input = './data_storage/json/without_preprocessor.json'
         inference_file = './data_storage/datasets/inference-data/inference-input.csv'

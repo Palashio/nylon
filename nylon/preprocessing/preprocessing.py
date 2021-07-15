@@ -49,6 +49,8 @@ def initial_preprocessor(
 
     del data[target]
 
+    df_pre_transform = data.copy()
+
     X_train, X_test, y_train, y_test = train_test_split(
         data, y, test_size=0.2, shuffle = json_file['shuffle'])
 
@@ -64,7 +66,7 @@ def initial_preprocessor(
 
     target_transformers = preprocess_y_data(y, y_split, target)
 
-    return data, y_split, target_transformers
+    return data, y_split, df_pre_transform, target_transformers
 
 def preprocess_y_data(y_full, y_split, target):
     target_transformers = None

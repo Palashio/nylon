@@ -32,10 +32,16 @@ def preprocess_module(request_info):
 
     shuffle_during_split = 'preserve' not in request_info
 
+    df_pre_transform = None 
+
     if 'preprocessor' in json_file:
         preprocess = json_file['preprocessor']
 
         target = json_file['data']['target']
+
+        df_pre_transform = df.copy()
+
+        del df_pre_transform[target]
 
         target_transformers = []
         
@@ -70,9 +76,12 @@ def preprocess_module(request_info):
             if element == 'embed':
                 result = handle_embedding(preprocess, df)
             if element == "fill":
-                result = handle_filling(preprocess, df)
+                result = handle_filling(preprocess, df, target)
+                null_rows = result.pop()
+                df_pre_transform = df_pre_transform.drop(null_rows)
+                
             if element == "scale":
-                result = handle_scaling(preprocess, df)
+                result = handle_scaling(preprocess, df, target)
             if element == 'min-max':
                 result = handle_min_max(preprocess, df, target)
             if element == "ordinal":
@@ -83,14 +92,12 @@ def preprocess_module(request_info):
                 result = handle_one_hot(preprocess, df, target)
 
             df = result.pop()
-            columns = result.pop()
-            applied_to_target = target in columns
+            
             if(len(result) > 0):
                 for transformer in result:
-                    if(applied_to_target):
-                        target_transformers.append(transformer)
+                    target_transformers.append(transformer)
         
-        request_info['transformers'] = target_transformers
+        request_info['target-transforms'] = target_transformers
 
         y = df[target]
 
@@ -111,9 +118,11 @@ def preprocess_module(request_info):
             raise Exception("The preprocessing modules you provided is not sufficient")
     else:
         json_file['shuffle'] = shuffle_during_split
-        df, y, target_transformers = initial_preprocessor(df, json_file)
+        df, y, df_pre_transform, target_transformers = initial_preprocessor(df, json_file)
 
         request_info['target-transforms'] = target_transformers
+    
+    request_info['initial-data'] = df_pre_transform
 
     x_train, y_train = df['train'], y['train']
     x_cols, y_col = list(x_train.columns), str(y_train.name)
@@ -147,10 +156,6 @@ def modeling_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
     y = request_info['y']
-
-    print("Staring to train the model")
-    start_time = time.time()
-
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
     else:
@@ -219,8 +224,6 @@ def modeling_module(request_info):
             bagging_classifier.fit(df['train'], y['train'])
             model = bagging_classifier
     
-    end_time = time.time()
-    print("Modeling sucessfully trained in " + str(end_time - start_time) + " secs")
     request_info['df'] = df
     request_info['model'] = model
     request_info['y'] = y
@@ -344,7 +347,7 @@ def perform_inference(request_info):
     preprocessing_input[y_col] = [0.0 for i in range(num_values)]
     request_info['df'] = preprocessing_input
     request_info['preserve'] = True
-    preprocess_module(request_info)
+    request_info = preprocess_module(request_info)
     x_values = request_info['df']
     train_x, test_x = x_values['train'], x_values['test']
     original_data = pd.concat([train_x, test_x])
@@ -359,6 +362,6 @@ def perform_inference(request_info):
         if(len(transformations) > 0): 
             for transformer in reversed(transformations):
                 result = transformer.inverse_transform(result)
-    output = input_data
+    output = request_info['initial-data']
     output[y_col] = result
     return output
