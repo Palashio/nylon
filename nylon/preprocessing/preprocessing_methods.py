@@ -20,11 +20,13 @@ from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)
 
-def handle_scaling(preprocess, df):
+def handle_scaling(preprocess, df, target):
     columns = preprocess["scale"]
 
     if isinstance(columns, str):
         columns = [columns]
+    
+    result = []
 
     for column in columns:
         if column not in df.columns:
@@ -34,14 +36,25 @@ def handle_scaling(preprocess, df):
             raise Exception("You can only scale numeric columns, your column was a boolean.")
 
         scaler = StandardScaler()
-        df[column] = scaler.fit_transform(np.array(df[column]).reshape(-1, 1))
-    return df
+        data = np.array(df[column]).reshape(-1, 1)
+        transformed = scaler.fit(data)
+        df[column] = transformed.transform(data)
 
-def handle_min_max(preprocess, df):
+        if column == target:
+            result.append(transformed)
+
+    result.append(df)
+
+    return result
+
+def handle_min_max(preprocess, df, target):
     columns = preprocess["min-max"]
+
+    result = []
 
     if isinstance(columns, str):
         columns = [columns]
+
     for column in columns:
         if column not in df.columns:
             raise Exception(
@@ -50,36 +63,60 @@ def handle_min_max(preprocess, df):
             raise Exception("You can only scale numeric columns, your column was a boolean.")
 
         scaler = MinMaxScaler()
-        df[column] = scaler.fit_transform(np.array(df[column]).reshape(-1, 1))
-    return df
+        data = np.array(df[column]).reshape(-1, 1)
+        transformed = scaler.fit(data)
+        df[column] = transformed.transform(data)
 
-def handle_label_encode(preprocess, df):
+        if(column == target):
+            result.append(transformed)
+    
+    result.append(columns)
+    result.append(df)
+
+    return result
+
+def handle_label_encode(preprocess, df, target):
     columns = preprocess['label-encode']
 
     if isinstance(columns, str):
         columns = [columns]
-
+    result = []
     for column in columns:
-        enc = LabelEncoder()
-        resulting_encoder = enc.fit_transform(df[column])
-        df = df.assign(ocean_proximity=resulting_encoder)
-    return df
 
-def handle_ordinal(preprocess, df):
+        enc = LabelEncoder()
+        data = np.array(df[column]).reshape(-1, 1)
+        resulting_encoder = enc.fit(data)
+        df[column] = resulting_encoder.transform(data)
+
+        if(column == target):
+            result.append(resulting_encoder)
+
+    result.append(df)
+    return result
+
+def handle_ordinal(preprocess, df, target):
     columns = preprocess['ordinal']
 
     if isinstance(columns, str):
         columns = [columns]
-
+    result = []
     for column in columns:
         enc = OrdinalEncoder()
-        df[column] = enc.fit_transform(np.array(df[column]).reshape(-1, 1))
+        data = np.array(df[column]).reshape(-1, 1)
+        resulting_enconder = enc.fit(data)
+        df[column] = resulting_enconder.transform(data)
+        if(column == target):
+            result.append(resulting_enconder)
+    
+    result.append(df)
+    return result
 
-    return df
 
-
-def handle_filling(preprocess, df):
+def handle_filling(preprocess, df, target):
+    result = []
+    null_indicies = None 
     if preprocess['fill'] == 'ALL':
+        null_indicies = df.index[df.isnull().any(axis=1)].tolist()
         df = df.dropna()
     else:
         if 'column' not in preprocess['fill']:
@@ -102,11 +139,17 @@ def handle_filling(preprocess, df):
             column_transformed = np.array(df[column]).reshape(-1, 1)
             imputer = SimpleImputer(missing_values=(np.nan if target == 'nan' else target),
                                     strategy=tactic)
+            data = np.array(df[column]).reshape(-1, 1)
+            fitted = imputer.fit(data)
+            df[column] = fitted.transform(data)
+            if(column == target):
+                result.append(fitted)
 
-            df[column] = imputer.fit_transform(np.array(df[column]).reshape(-1, 1))
+    result.append(df)
+    result.append(null_indicies)
+    return result
 
-    return df
-def handle_importance(preprocess, df, json_file):
+def handle_importance(preprocess, df, target):
     number = preprocess['importance']
 
     if not isinstance(number, int):
@@ -114,31 +157,34 @@ def handle_importance(preprocess, df, json_file):
 
     forest = RandomForestRegressor()
 
-    target = json_file['data']['target']
     y = df[target]
     del df[target]
 
     forest.fit(df, y)
     importance = forest.feature_importances_
 
+    columns = []
+
     if number < 0:
         lowest_indices = importance.argsort()[:number * -1]
 
         for index, column in enumerate(df.columns):
+            columns.append(column)
             if index in lowest_indices:
                 del df[column]
     else:
         top_indices = np.argpartition(importance, number * -1)[number * 1:]
 
         for index, column in enumerate(df.columns):
+            columns.append(column)
             if index not in top_indices:
                 del df[column]
 
     df[target] = y.values
 
-    return df
+    return [df]
 
-def handle_one_hot(preprocess, df, json_file):
+def handle_one_hot(preprocess, df, target):
     columns = preprocess['one-hot']
 
     if isinstance(columns, str):
@@ -147,7 +193,7 @@ def handle_one_hot(preprocess, df, json_file):
     for column in columns:
         if is_numeric_dtype(column):
             raise Exception("You can only one hot encode on numeric columns, your column was a boolean.")
-        if column == json_file['data']['target']:
+        if column == target:
             raise Exception("You cannot one-hot-encode the target column you've specified")
 
         label = LabelEncoder()
@@ -161,7 +207,8 @@ def handle_one_hot(preprocess, df, json_file):
             df[value] = enc_df[value].values
 
         del df[column]
-    return df
+
+    return [df]
 
 def handle_text(preprocess, df):
     columns = preprocess['clean-text']
@@ -170,7 +217,7 @@ def handle_text(preprocess, df):
 
     df = text_preprocessing(df, columns)
 
-    return df
+    return [df]
 
 def handle_embedding(preprocess, df):
     columns = preprocess['embed']
@@ -179,7 +226,7 @@ def handle_embedding(preprocess, df):
 
     df = embedding_preprocessor(df, columns)
 
-    return df
+    return [df]
 
 def handle_dates(preprocess, df):
     columns = preprocess['dates']
@@ -189,9 +236,7 @@ def handle_dates(preprocess, df):
 
     df = process_dates(df)
 
-
-
-    return df
+    return [df]
 
 
 def text_preprocessing(combined, text_cols):

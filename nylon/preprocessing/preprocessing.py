@@ -13,7 +13,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import (OneHotEncoder,
                                    StandardScaler,
                                    FunctionTransformer, LabelEncoder)
-
+from pandas.api.types import is_numeric_dtype
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -48,24 +48,37 @@ def initial_preprocessor(
     y = y[y.notna()]
 
     del data[target]
+
+    df_pre_transform = data.copy()
+
     X_train, X_test, y_train, y_test = train_test_split(
-        data, y, test_size=0.2)
+        data, y, test_size=0.2, shuffle = json_file['shuffle'])
 
     data = {
         'train': pd.concat([X_train], axis=1),
         'test': pd.concat([X_test], axis=1)
     }
+
     # preprocess the dataset
-    full_pipeline = None
-    if True:
-        data, full_pipeline = structured_preprocessor(data)
-    else:
-        data.fillna(0, inplace=True)
+    data, full_pipeline = structured_preprocessor(data)
 
-    y = {'train': y_train, 'test': y_test}
+    y_split = {'train' : y_train, 'test' : y_test}
 
-    return data, y
+    target_transformers = preprocess_y_data(y, y_split, target)
 
+    return data, y_split, df_pre_transform, target_transformers
+
+def preprocess_y_data(y_full, y_split, target):
+    target_transformers = None
+    if not is_numeric_dtype(y_full):
+        enc = LabelEncoder()
+        fitted_enc = enc.fit(y_full)
+        y_split['train'] = pd.Series(fitted_enc.transform(y_split['train']))
+        y_split['train'].name = target
+        y_split['test'] = pd.Series(fitted_enc.transform(y_split['test']))
+        y_split['test'].name = target
+        target_transformers = [fitted_enc]
+    return target_transformers
 
 def structured_preprocessor(data, ca_threshold=0.5, text=[]):
     '''
@@ -154,7 +167,7 @@ def structured_preprocessor(data, ca_threshold=0.5, text=[]):
         else:
             cat_pipeline = Pipeline([
                 ('imputer', SimpleImputer(strategy="constant", fill_value="")),
-                ('one_hotencoder', OneHotEncoder(handle_unknown='ignore'))
+                ('label_enconder', LabelEncoder())
             ])
 
         full_pipeline.transformers.append(

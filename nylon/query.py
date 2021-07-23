@@ -1,5 +1,6 @@
+from pandas.core.algorithms import mode
 from nylon.supplementaries.main import dataset_initializer
-from nylon.supplementaries.handlers import (preprocess_module, preprocess_module_inference, modeling_module, analysis_module)
+from nylon.supplementaries.handlers import (preprocess_module, modeling_module, analysis_module, perform_inference)
 import uuid
 import pandas as pd
 
@@ -21,6 +22,9 @@ class Polymer:
         self.dataframe = None
         self.latest_id = None
         self.debug = False
+        self.col_names = None
+        self.pca_model = None
+        self.transforms = None
 
     def run(self, json_file_path, as_dict=False, perform_PCA = True):
         '''
@@ -39,7 +43,7 @@ class Polymer:
         pipeline = None
 
         if(self.debug):
-            pipeline = [dataset_initializer, preprocess_module]
+            pipeline = [dataset_initializer, preprocess_module, modeling_module]
         else: 
             pipeline = [dataset_initializer, preprocess_module, modeling_module, analysis_module]
 
@@ -94,10 +98,28 @@ class Polymer:
     def set_class_after_run(self, request_info):
         self.results = request_info['analysis']
         self.model = request_info['model']
+        
         self.json_file = request_info['json']
         self.y = request_info['y']
         self.dataframe = request_info['df']
 
+        self.col_names = request_info['col_names']
+        if 'pca_model' in request_info:
+            self.pca_model = request_info['pca_model']
+        self.transforms = request_info['target-transforms']
+    
+    def get_results(self, input_file, output_file_path = ""):
+        request_info = {'input' : input_file, 'cols' : self.col_names, 'json' : self.json_file, 
+        'model'  : self.model, 'result-transforms' : self.transforms}
+        if self.pca_model is not None: 
+            request_info['pca-model'] = self.pca_model
+        output = perform_inference(request_info)
+        if(len(output_file_path) > 0):
+            if(output_file_path[-3 : ] == 'csv'):
+                output.to_csv(output_file_path, index = False)
+            elif(output_file_path[-4 : ] == 'json'):
+                output.to_json(output_file_path, orient='records')
+        return output
     
     def transformToPrinciple(self, values):
         if not self.runPCA:

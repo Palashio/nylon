@@ -1,5 +1,6 @@
+import os,sys
+sys.path.append(os.getcwd())
 from nylon.query import Polymer
-
 import unittest
 
 
@@ -140,6 +141,37 @@ class TestQueries(unittest.TestCase):
                 columns_transformed = False
                 break 
         self.assertTrue(columns_transformed)
+    
+    @ordered
+    def test_inference(self):
+       housing_file = './data_storage/datasets/housing.csv'
+       basic_json = './data_storage/json/basic.json'
+       inference_file = './data_storage/datasets/inference-data/inference-input.csv'
+       output_file = './data_storage/datasets/inference-data/inference-output.csv'
+       if(os.path.exists(output_file)):
+           os.remove(output_file)
+       simple = Polymer(housing_file)
+       value = simple.run(basic_json, perform_PCA = True)
+       result = value.get_results(inference_file, output_file_path = output_file)
+       valid = 'ocean_proximity' in result
+       output_saved = os.path.exists(output_file)
+       self.assertTrue(valid and output_saved)
+    
+    @ordered
+    def test_inference_no_pre(self):
+        housing_file = './data_storage/datasets/housing.csv'
+        json_input = './data_storage/json/without_preprocessor.json'
+        inference_file = './data_storage/datasets/inference-data/inference-input.csv'
+        output_location = './data_storage/datasets/inference-data/inference-output.csv'
+        simple = Polymer(housing_file)
+        value = simple.run(json_input, perform_PCA = False)
+        if os.path.exists(output_location):
+            os.remove(output_location)
+        result = value.get_results(inference_file, output_file_path = output_location)
+        valid = 'ocean_proximity' in result
+        output_saved = os.path.exists(output_location)
+        self.assertTrue(valid and output_saved)
 
+        
 if __name__ == '__main__':
     unittest.main()

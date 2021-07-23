@@ -1,3 +1,5 @@
+from pandas.core.algorithms import mode
+from pandas.io import json
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -11,11 +13,13 @@ import ssl
 from nylon.preprocessing.preprocessing import (initial_preprocessor)
 import nltk
 import pandas as pd
+import time
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
 from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper
+from nylon.data.reader import DataReader
 
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
@@ -27,8 +31,21 @@ def preprocess_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
 
+    shuffle_during_split = 'preserve' not in request_info
+
+    df_pre_transform = None 
+
     if 'preprocessor' in json_file:
         preprocess = json_file['preprocessor']
+
+        target = json_file['data']['target']
+
+        df_pre_transform = df.copy()
+
+        del df_pre_transform[target]
+
+        target_transformers = []
+        
         for element in preprocess:
             if element not in preprocess_vocab:
                 raise Exception("Your specificed preprocessing technique -- {} -- is not supported".format(element))
@@ -49,33 +66,46 @@ def preprocess_module(request_info):
                 sys.path.remove(sys_path)
                 os.remove("./buffer/temp.py")
 
-            if element == "label-encode":
-                df = handle_label_encode(preprocess, df)
-            if element == 'dates':
-                df = handle_dates(preprocess, df)
-            if element == 'clean-text':
-                df = handle_text(preprocess, df)
-            if element == 'embed':
-                df = handle_embedding(preprocess, df)
-            if element == "fill":
-                df = handle_filling(preprocess, df)
-            if element == "scale":
-                df = handle_scaling(preprocess, df)
-            if element == 'min-max':
-                df = handle_min_max(preprocess, df)
-            if element == "ordinal":
-                df = handle_ordinal(preprocess, df)
-            if element == "importance":
-                df = handle_importance(preprocess, df, json_file)
-            if element == "one-hot":
-                df = handle_one_hot(preprocess, df, json_file)
+            result = None
 
-        target = json_file['data']['target']
+            if element == "label-encode":
+                result = handle_label_encode(preprocess, df, target)
+            if element == 'dates':
+                result = handle_dates(preprocess, df)
+            if element == 'clean-text':
+                result = handle_text(preprocess, df)
+            if element == 'embed':
+                result = handle_embedding(preprocess, df)
+            if element == "fill":
+                result = handle_filling(preprocess, df, target)
+                null_rows = result.pop()
+                df_pre_transform = df_pre_transform.drop(null_rows)
+                
+            if element == "scale":
+                result = handle_scaling(preprocess, df, target)
+            if element == 'min-max':
+                result = handle_min_max(preprocess, df, target)
+            if element == "ordinal":
+                result = handle_ordinal(preprocess, df, target)
+            if element == "importance":
+                result = handle_importance(preprocess, df, target)
+            if element == "one-hot":
+                result = handle_one_hot(preprocess, df, target)
+
+            df = result.pop()
+            
+            if(len(result) > 0):
+                for transformer in result:
+                    target_transformers.append(transformer)
+        
+        request_info['target-transforms'] = target_transformers
+
         y = df[target]
 
         del df[target]
+
         X_train, X_test, y_train, y_test = train_test_split(
-                df, y, test_size=0.2)
+                df, y, test_size=0.2, shuffle = shuffle_during_split)
 
         df = {
                 'train': pd.concat([X_train], axis=1),
@@ -88,14 +118,25 @@ def preprocess_module(request_info):
         except:
             raise Exception("The preprocessing modules you provided is not sufficient")
     else:
-        df, y = initial_preprocessor(df, json_file)
+        json_file['shuffle'] = shuffle_during_split
+        df, y, df_pre_transform, target_transformers = initial_preprocessor(df, json_file)
 
-    perform_pca = request_info['pca']
+        request_info['target-transforms'] = target_transformers
+    
+    request_info['initial-data'] = df_pre_transform
+
+    x_train, y_train = df['train'], y['train']
+    x_cols, y_col = list(x_train.columns), str(y_train.name)
+    request_info['col_names'] = { 'x' : x_cols, 'y' : y_col }
+    perform_pca = 'pca' in request_info
+    if(perform_pca):
+        perform_pca = request_info['pca']
     if(perform_pca):
         train_x, test_x = df['train'], df['test']
         x_data = pd.concat([train_x, test_x])
         pca_model = PCA()
         fitted_pca = pca_model.fit(x_data)
+        request_info['pca_model'] = fitted_pca
         X_train, X_test = train_test_split(x_data, test_size=0.2)
         X_train_pca = applyPCATransformation(fitted_pca, X_train)
         X_test_pca = applyPCATransformation(fitted_pca, X_test)
@@ -116,7 +157,6 @@ def modeling_module(request_info):
     json_file = request_info['json']
     df = request_info['df']
     y = request_info['y']
-
     if 'modeling' not in json_file:
         model = default_modeling(df, y)
     else:
@@ -184,7 +224,7 @@ def modeling_module(request_info):
 
             bagging_classifier.fit(df['train'], y['train'])
             model = bagging_classifier
-
+    
     request_info['df'] = df
     request_info['model'] = model
     request_info['y'] = y
@@ -267,10 +307,6 @@ def analysis_module(request_info):
     request_info['analysis'] = analysis_tuple
     return request_info
 
-
-
-
-
 def nltk_downloads():
     try:
         _create_unverified_https_context = ssl._create_unverified_context
@@ -295,6 +331,41 @@ def feature_importances(model, df, y):
 
     return importance_dict
 
+def perform_inference(request_info):
+    input_file_path = request_info['input']
+    columns = request_info['cols']
+    x_cols, y_col = columns['x'], columns['y']
+    reader = DataReader({}, input_file_path)
+    input_data = reader.data_reader(error_checking = False)
+    model_input = pd.DataFrame()
+    for col in x_cols: 
+        if col in input_data:
+            model_input[col] = input_data[col].astype('float64')
+        else:
+            raise Exception("Column " + str(col) + " not in input data")
+    preprocessing_input = model_input.copy()
+    num_values = len(preprocessing_input.index)
+    preprocessing_input[y_col] = [0.0 for i in range(num_values)]
+    request_info['df'] = preprocessing_input
+    request_info['preserve'] = True
+    request_info = preprocess_module(request_info)
+    x_values = request_info['df']
+    train_x, test_x = x_values['train'], x_values['test']
+    original_data = pd.concat([train_x, test_x])
+    model_input = original_data.copy()
+    if 'pca-model' in request_info:
+        pca_model = request_info['pca-model']
+        model_input = applyPCATransformation(pca_model, model_input)
+    model = request_info['model']
+    result = model.predict(model_input)
+    transformations = request_info['result-transforms']
+    if(transformations is not None ):
+        if(len(transformations) > 0): 
+            for transformer in reversed(transformations):
+                result = transformer.inverse_transform(result)
+    output = request_info['initial-data']
+    output[y_col] = result
+    return output
 
 def preprocess_module_inference(request_info):
 
@@ -350,11 +421,3 @@ def preprocess_module_inference(request_info):
     request_info['df'] = df
 
     return request_info
-
-
-
-
-
-
-
-

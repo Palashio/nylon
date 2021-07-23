@@ -30,7 +30,7 @@ class DataReader():
                 dropping.append(element)
         return dropping
 
-    def data_reader(self):
+    def data_reader(self, error_checking = True):
         '''
         function to activate the data reading
         :return dataframe that's read into the system as a pandas dataframe object
@@ -45,11 +45,11 @@ class DataReader():
 
         if data_type == 'csv':
             frame = self.csv(self.dataset_name, drop=dropping)
-            if self.data['data']['target'] not in frame.columns:
+            if (error_checking and self.data['data']['target'] not in frame.columns):
                 raise Exception("The target you provided -- {} -- is not in the dataframe.".format(self.data["target"]))
         if data_type == 'xs':
-            frame = self.xs(self.data, drop=dropping)
-            if self.data['target'] not in frame.columns:
+            frame = self.xs(self.dataset_name, drop=dropping)
+            if (error_checking and self.data['target'] not in frame.columns):
                 raise Exception("The target you provided -- {} -- is not in the dataframe.".format(self.data["target"]))
         if 'trim' not in self.data:
             pass
