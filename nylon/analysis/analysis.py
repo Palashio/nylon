@@ -44,3 +44,6 @@ def recall_score_helper(model, df, y):
     output = model.predict(df['test'])
     average_value = ('binary' if len(np.unique(y['test'])) == 2 else 'macro')
     return float(recall_score(y['test'], output, average=average_value, labels=np.unique(output)))
+
+def correlations(df, confusion_matrix=False):
+    return df.corr()

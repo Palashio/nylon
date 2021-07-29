@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from nylon.modeling.modeling import (a_svm, nearest_neighbors, a_tree, sgd, gradient_boosting, adaboost, rf, mlp, default_modeling, svm_stroke, ensemble_stroke)
 from nylon.preprocessing.preprocessing_methods import handle_scaling, handle_min_max, handle_label_encode, handle_ordinal, handle_filling, handle_importance, handle_one_hot, handle_text, handle_embedding, handle_dates
-from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper
+from nylon.analysis.analysis import default_analysis, acc_score, cross_score, confusion, precision_calculation, recall_score_helper, correlations
 
 preprocess_vocab = {'one-hot', 'label-encode', 'fill', 'scale', 'dates', 'custom', 'min-max', 'ordinal', 'importance', 'clean-text', 'embed'}
 analysis_vocab = ['cross-val', 'acc-score', 'confusion', 'pr', 'importances', 'ALL']
@@ -238,6 +238,8 @@ def analysis_module(request_info):
                         analysis_tuple['recall'] = recall_score_helper(model, df, y)
                     if analysis_type == 'importances':
                         analysis_tuple['importances'] = feature_importances(model, df, y)
+                    if analysis_type == 'correlation':
+                        analysis_tuple['correlation'] = correlations(df)
                     if analysis_type == 'ALL':
                         acc, cv, matrix, precision, recaller = default_analysis(json_file, model, df, y)
                         analysis_tuple['acc-score'] = acc

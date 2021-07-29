@@ -121,7 +121,6 @@ class Polymer:
         the_model = self.model
         df = pd.read_csv(file_path)
 
-
         request_info = {'df': df, 'json': self.json_file, 'y': None, 'model': 'None', 'analysis': None,
                         'custom': self.custom_files, 'pca': self.runPCA}
 
